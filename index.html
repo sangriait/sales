@@ -96,37 +96,25 @@
             </div>
           </section>
 
-          <!-- Placeholder screens for departments (will be detailed later) -->
+          <!-- Department screens backed by live data -->
           <section id="view-marketing" class="view">
             <div class="card">
               <h2>Marketing</h2>
               <p class="muted">
-                Sample data for current campaigns and leads. This can be
-                extended later with full marketing workflows.
+                Live view of marketing projects and tasks from Operations. Any
+                Marketing project you add in Operations will appear here.
               </p>
               <table class="table">
                 <thead>
                   <tr>
-                    <th>Campaign</th>
-                    <th>Status</th>
-                    <th>Leads</th>
-                    <th>Conversion %</th>
+                    <th>Project</th>
+                    <th>Type</th>
+                    <th>Total Tasks</th>
+                    <th>Open</th>
+                    <th>Completed</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td>Summer Launch</td>
-                    <td>Active</td>
-                    <td>120</td>
-                    <td>12%</td>
-                  </tr>
-                  <tr>
-                    <td>Referral Program</td>
-                    <td>Paused</td>
-                    <td>80</td>
-                    <td>9%</td>
-                  </tr>
-                </tbody>
+                <tbody id="marketing-body"></tbody>
               </table>
             </div>
           </section>
@@ -135,34 +123,20 @@
             <div class="card">
               <h2>Sales</h2>
               <p class="muted">
-                Sample data for the sales pipeline. This area can be wired to
-                your CRM later.
+                Live view of sales projects and tasks. Any Sales project you
+                manage in Operations will be reflected here.
               </p>
               <table class="table">
                 <thead>
                   <tr>
-                    <th>Stage</th>
-                    <th>Deals</th>
-                    <th>Value</th>
+                    <th>Project</th>
+                    <th>Type</th>
+                    <th>Total Tasks</th>
+                    <th>Open</th>
+                    <th>Completed</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td>Prospecting</td>
-                    <td>18</td>
-                    <td>$45,000</td>
-                  </tr>
-                  <tr>
-                    <td>Proposal</td>
-                    <td>10</td>
-                    <td>$70,000</td>
-                  </tr>
-                  <tr>
-                    <td>Won</td>
-                    <td>6</td>
-                    <td>$55,000</td>
-                  </tr>
-                </tbody>
+                <tbody id="sales-body"></tbody>
               </table>
             </div>
           </section>
@@ -171,30 +145,20 @@
             <div class="card">
               <h2>Accounts</h2>
               <p class="muted">
-                Sample financial snapshot. Can be connected to your accounting
-                system later.
+                Live summary of projects and tasks owned by the Accounts
+                department.
               </p>
               <table class="table">
                 <thead>
                   <tr>
-                    <th>Category</th>
-                    <th>Amount</th>
+                    <th>Project</th>
+                    <th>Type</th>
+                    <th>Total Tasks</th>
+                    <th>Open</th>
+                    <th>Completed</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td>Receivables</td>
-                    <td>$32,000</td>
-                  </tr>
-                  <tr>
-                    <td>Payables</td>
-                    <td>$18,500</td>
-                  </tr>
-                  <tr>
-                    <td>Revenue (MTD)</td>
-                    <td>$74,000</td>
-                  </tr>
-                </tbody>
+                <tbody id="accounts-body"></tbody>
               </table>
             </div>
           </section>
@@ -298,30 +262,45 @@
             </div>
 
             <!-- Operations - Add Project -->
-            <div id="ops-projects" class="subview two-column">
-              <div class="card">
-                <h2>Add Project (Name & Type)</h2>
+            <div id="ops-projects" class="subview">
+              <div class="card" style="max-width: 900px; margin: 0 auto;">
+                <h2>New Project</h2>
                 <form id="form-project" class="form-grid">
-                  <label>
-                    Project Name
+                  <label style="grid-column: 1 / -1;">
+                    Project Title *
                     <input
                       type="text"
                       name="name"
-                      placeholder="Enter project name"
+                      placeholder="Enter project title"
                       required
                     />
                   </label>
                   <label>
-                    Project Type
-                    <input
-                      type="text"
-                      name="type"
-                      placeholder="Internal, Client, Campaign..."
-                      required
-                    />
+                    Owner
+                    <select name="ownerId" id="select-project-owner">
+                      <option value="">Select owner</option>
+                    </select>
                   </label>
                   <label>
-                    Department
+                    Template
+                    <select name="template">
+                      <option value="">Select template</option>
+                      <option>Standard Template</option>
+                      <option>Agile Template</option>
+                      <option>Waterfall Template</option>
+                      <option>Custom Template</option>
+                    </select>
+                  </label>
+                  <label>
+                    Start Date
+                    <input type="date" name="startDate" required />
+                  </label>
+                  <label>
+                    End Date
+                    <input type="date" name="endDate" required />
+                  </label>
+                  <label>
+                    Department *
                     <select name="department" required>
                       <option value="">Select department</option>
                       <option>Marketing</option>
@@ -333,16 +312,89 @@
                     </select>
                   </label>
                   <label>
-                    Start Date
-                    <input type="date" name="startDate" required />
+                    Project Type
+                    <input
+                      type="text"
+                      name="type"
+                      placeholder="Internal, Client, Campaign..."
+                    />
                   </label>
                   <label>
-                    End Date
-                    <input type="date" name="endDate" required />
+                    Priority
+                    <select name="priority">
+                      <option value="none">None</option>
+                      <option value="low">Low</option>
+                      <option value="medium">Medium</option>
+                      <option value="high">High</option>
+                    </select>
                   </label>
-                  <button type="submit" class="btn-primary">
-                    Save Project
-                  </button>
+                  <label>
+                    Business Hours
+                    <select name="businessHours">
+                      <option value="standard">Standard Business Hours</option>
+                      <option value="24/7">24/7</option>
+                      <option value="custom">Custom</option>
+                    </select>
+                  </label>
+                  <label>
+                    Task Layout
+                    <select name="taskLayout">
+                      <option value="standard">Standard Layout</option>
+                      <option value="kanban">Kanban Board</option>
+                      <option value="list">List View</option>
+                      <option value="timeline">Timeline View</option>
+                    </select>
+                  </label>
+                  <label>
+                    Project Group
+                    <select name="projectGroup">
+                      <option value="">Select group</option>
+                      <option>Q1 Projects</option>
+                      <option>Q2 Projects</option>
+                      <option>Q3 Projects</option>
+                      <option>Q4 Projects</option>
+                      <option>Ongoing</option>
+                    </select>
+                  </label>
+                  <label>
+                    Tags
+                    <input
+                      type="text"
+                      name="tags"
+                      placeholder="Enter tags (comma separated)"
+                    />
+                  </label>
+                  <label style="grid-column: 1 / -1;">
+                    Description
+                    <textarea
+                      name="description"
+                      placeholder="Type @ to mention users. Type # to mention a Task or an Issue."
+                      rows="4"
+                    ></textarea>
+                  </label>
+                  <div style="grid-column: 1 / -1; margin-top: 0.5rem;">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; flex-direction: row;">
+                      <input type="checkbox" name="strictProject" />
+                      <span>Make this a strict project</span>
+                    </label>
+                  </div>
+                  <div style="grid-column: 1 / -1; margin-top: 0.5rem;">
+                    <details style="margin-top: 0.5rem;">
+                      <summary style="cursor: pointer; font-weight: 500; margin-bottom: 0.5rem;">Roll-up</summary>
+                      <label style="display: flex; align-items: center; gap: 0.5rem; flex-direction: row; margin-top: 0.5rem;">
+                        <input type="checkbox" name="rollup" />
+                        <span>Enable this option to roll-up dates from Tasks/subtasks to projects and Phases. Work hours, time logs, and % completion will roll-up from subtasks to Tasks.</span>
+                      </label>
+                    </details>
+                  </div>
+                  <div style="grid-column: 1 / -1; display: flex; gap: 0.75rem; margin-top: 1rem;">
+                    <button type="submit" class="btn-primary">
+                      Add Project
+                    </button>
+                    <button type="button" class="btn-secondary" onclick="document.getElementById('form-project').reset();">
+                      Cancel
+                    </button>
+                  </div>
                 </form>
               </div>
               <div class="card">
@@ -363,32 +415,47 @@
             </div>
 
             <!-- Operations - Add Tasks -->
-            <div id="ops-tasks" class="subview two-column">
-              <div class="card">
-                <h2>Add Tasks to Project</h2>
+            <div id="ops-tasks" class="subview">
+              <div class="card" style="max-width: 900px; margin: 0 auto;">
+                <h2>New Task</h2>
                 <form id="form-task" class="form-grid">
                   <label>
-                    Project
+                    Project *
                     <select name="projectId" id="select-task-project" required>
                       <option value="">Select project</option>
                     </select>
                   </label>
                   <label>
-                    Task Title
+                    Task Owner
+                    <select name="taskOwnerId" id="select-task-owner">
+                      <option value="">Select owner</option>
+                    </select>
+                  </label>
+                  <label style="grid-column: 1 / -1;">
+                    Task Title *
                     <input
                       type="text"
                       name="title"
-                      placeholder="Define task title"
+                      placeholder="Enter task title"
                       required
                     />
                   </label>
                   <label>
-                    Description
-                    <textarea
-                      name="description"
-                      placeholder="Describe the work to be done"
-                      rows="3"
-                    ></textarea>
+                    Priority
+                    <select name="priority">
+                      <option value="none">! None</option>
+                      <option value="low">! Low</option>
+                      <option value="medium">! Medium</option>
+                      <option value="high">! High</option>
+                    </select>
+                  </label>
+                  <label>
+                    Start Date
+                    <input type="date" name="startDate" />
+                  </label>
+                  <label>
+                    Due Date
+                    <input type="date" name="dueDate" />
                   </label>
                   <label>
                     Estimated Hours
@@ -400,18 +467,50 @@
                       placeholder="e.g. 8"
                     />
                   </label>
-                  <button type="submit" class="btn-primary">
-                    Save Task
-                  </button>
+                  <label>
+                    Time
+                    <input
+                      type="time"
+                      name="time"
+                      value="09:00"
+                    />
+                  </label>
+                  <label style="grid-column: 1 / -1;">
+                    Description
+                    <textarea
+                      name="description"
+                      placeholder="Type @ to mention users. Type # to mention a Task or an Issue."
+                      rows="4"
+                    ></textarea>
+                  </label>
+                  <label style="grid-column: 1 / -1;">
+                    Notify users associated with the Task
+                    <select name="notifyUsers" id="select-task-notify" multiple style="min-height: 100px;">
+                      <option value="po">PO - Project Owner</option>
+                      <option value="to">TO - Task Owner</option>
+                      <option value="tc">TC - Task Created By</option>
+                      <option value="tf">TF - Task Followers</option>
+                    </select>
+                    <small style="color: var(--text-soft); font-size: 0.75rem;">Hold Ctrl/Cmd to select multiple</small>
+                  </label>
+                  <div style="grid-column: 1 / -1; display: flex; gap: 0.75rem; margin-top: 1rem;">
+                    <button type="submit" class="btn-primary">
+                      Add Task
+                    </button>
+                    <button type="button" class="btn-secondary" onclick="document.getElementById('form-task').reset();">
+                      Cancel
+                    </button>
+                  </div>
                 </form>
               </div>
-              <div class="card">
-                <h3>Tasks by Project</h3>
+              <div class="card" style="margin-top: 1.5rem;">
+                <h3>All Tasks</h3>
                 <table class="table" id="table-tasks">
                   <thead>
                     <tr>
                       <th>Project</th>
                       <th>Task</th>
+                      <th>Priority</th>
                       <th>Status</th>
                       <th>Est. Hours</th>
                       <th>Actions</th>
@@ -636,8 +735,8 @@
             <div class="card">
               <h2>Human Resources</h2>
               <p class="muted">
-                Sample snapshot of headcount and open positions. This can be
-                evolved into full HR workflows.
+                Snapshot based on live resources and tasks. Numbers update as
+                you add team members and assignments.
               </p>
               <table class="table">
                 <thead>
@@ -646,20 +745,7 @@
                     <th>Value</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td>Total Employees</td>
-                    <td>42</td>
-                  </tr>
-                  <tr>
-                    <td>Open Positions</td>
-                    <td>5</td>
-                  </tr>
-                  <tr>
-                    <td>Average Tenure</td>
-                    <td>2.3 years</td>
-                  </tr>
-                </tbody>
+                <tbody id="hr-body"></tbody>
               </table>
             </div>
           </section>
@@ -669,33 +755,19 @@
             <div class="card">
               <h2>Client Service</h2>
               <p class="muted">
-                Sample ticket statistics for your client service desk.
+                View of workload for Client Service based on current projects,
+                tasks, and assignments in Operations.
               </p>
               <table class="table">
                 <thead>
                   <tr>
-                    <th>Queue</th>
+                    <th>Project</th>
+                    <th>Total Tasks</th>
                     <th>Open</th>
-                    <th>Resolved Today</th>
+                    <th>Completed</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td>General Support</td>
-                    <td>23</td>
-                    <td>14</td>
-                  </tr>
-                  <tr>
-                    <td>Billing</td>
-                    <td>8</td>
-                    <td>5</td>
-                  </tr>
-                  <tr>
-                    <td>Priority Clients</td>
-                    <td>3</td>
-                    <td>3</td>
-                  </tr>
-                </tbody>
+                <tbody id="service-body"></tbody>
               </table>
             </div>
           </section>

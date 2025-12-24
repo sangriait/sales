@@ -1,3 +1,4 @@
+
 // Simple in-memory data model
 const state = {
   resources: [],
@@ -157,18 +158,34 @@ function renderProjects() {
   const tbody = document.querySelector("#table-projects tbody");
   const selectTaskProject = document.getElementById("select-task-project");
   const selectAssignProject = document.getElementById("select-assign-project");
+  const selectProjectOwner = document.getElementById("select-project-owner");
 
   tbody.innerHTML = "";
   selectTaskProject.innerHTML = '<option value="">Select project</option>';
   selectAssignProject.innerHTML = '<option value="">Select project</option>';
+  
+  // Populate owner dropdown
+  if (selectProjectOwner) {
+    selectProjectOwner.innerHTML = '<option value="">Select owner</option>';
+    state.resources.forEach((r) => {
+      const opt = document.createElement("option");
+      opt.value = r.id;
+      opt.textContent = `${r.name} (${r.role})`;
+      selectProjectOwner.appendChild(opt);
+    });
+  }
 
   state.projects.forEach((p) => {
     const tr = document.createElement("tr");
     const duration = `${formatDate(p.startDate)} → ${formatDate(p.endDate)}`;
+    const priorityBadge = p.priority && p.priority !== "none" 
+      ? `<span class="status-pill status-pill--${p.priority}">${p.priority.toUpperCase()}</span>`
+      : "";
     tr.innerHTML = `
       <td>${p.name}</td>
-      <td>${p.type}</td>
+      <td>${p.type || "-"}</td>
       <td>${p.department}</td>
+      <td>${priorityBadge || "-"}</td>
       <td>${duration}</td>
       <td>
         <button class="table-button" data-view-project="${p.id}">View</button>
@@ -195,16 +212,32 @@ function renderProjects() {
 function renderTasks() {
   const tbody = document.querySelector("#table-tasks tbody");
   const selectAssignTask = document.getElementById("select-assign-task");
+  const selectTaskOwner = document.getElementById("select-task-owner");
 
   tbody.innerHTML = "";
   selectAssignTask.innerHTML = '<option value="">Select task</option>';
+  
+  // Populate task owner dropdown
+  if (selectTaskOwner) {
+    selectTaskOwner.innerHTML = '<option value="">Select owner</option>';
+    state.resources.forEach((r) => {
+      const opt = document.createElement("option");
+      opt.value = r.id;
+      opt.textContent = `${r.name} (${r.role})`;
+      selectTaskOwner.appendChild(opt);
+    });
+  }
 
   state.tasks.forEach((t) => {
     const project = state.projects.find((p) => p.id === t.projectId);
+    const priorityBadge = t.priority && t.priority !== "none"
+      ? `<span class="status-pill status-pill--${t.priority}">${t.priority.toUpperCase()}</span>`
+      : "";
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${project ? project.name : "-"}</td>
       <td>${t.title}</td>
+      <td>${priorityBadge || "-"}</td>
       <td><span class="status-pill status-pill--pending">Pending</span></td>
       <td>${t.estimate || "-"}</td>
       <td>
@@ -341,6 +374,126 @@ function renderDepartmentStats() {
   });
 
   renderCharts();
+  renderDepartmentViews();
+}
+
+function getDepartmentProjectSummary(department) {
+  const result = [];
+  const depProjects = state.projects.filter((p) => p.department === department);
+  depProjects.forEach((p) => {
+    const projectTasks = state.tasks.filter((t) => t.projectId === p.id);
+    const projectAssignments = state.assignments.filter(
+      (a) => a.projectId === p.id
+    );
+    const open = projectAssignments.filter((a) => a.status !== "completed")
+      .length;
+    const completed = projectAssignments.filter(
+      (a) => a.status === "completed"
+    ).length;
+    result.push({
+      name: p.name,
+      type: p.type,
+      totalTasks: projectTasks.length,
+      open,
+      completed,
+    });
+  });
+  return result;
+}
+
+function renderDepartmentViews() {
+  const marketingBody = document.getElementById("marketing-body");
+  const salesBody = document.getElementById("sales-body");
+  const accountsBody = document.getElementById("accounts-body");
+  const hrBody = document.getElementById("hr-body");
+  const serviceBody = document.getElementById("service-body");
+
+  if (marketingBody) {
+    marketingBody.innerHTML = "";
+    getDepartmentProjectSummary("Marketing").forEach((row) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${row.name}</td>
+        <td>${row.type}</td>
+        <td>${row.totalTasks}</td>
+        <td>${row.open}</td>
+        <td>${row.completed}</td>
+      `;
+      marketingBody.appendChild(tr);
+    });
+  }
+
+  if (salesBody) {
+    salesBody.innerHTML = "";
+    getDepartmentProjectSummary("Sales").forEach((row) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${row.name}</td>
+        <td>${row.type}</td>
+        <td>${row.totalTasks}</td>
+        <td>${row.open}</td>
+        <td>${row.completed}</td>
+      `;
+      salesBody.appendChild(tr);
+    });
+  }
+
+  if (accountsBody) {
+    accountsBody.innerHTML = "";
+    getDepartmentProjectSummary("Accounts").forEach((row) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${row.name}</td>
+        <td>${row.type}</td>
+        <td>${row.totalTasks}</td>
+        <td>${row.open}</td>
+        <td>${row.completed}</td>
+      `;
+      accountsBody.appendChild(tr);
+    });
+  }
+
+  if (hrBody) {
+    hrBody.innerHTML = "";
+    const totalEmployees = state.resources.length;
+    const hrEmployees = state.resources.filter(
+      (r) => r.department === "Human Resources"
+    ).length;
+    const totalAssignments = state.assignments.length;
+    const completedAssignments = state.assignments.filter(
+      (a) => a.status === "completed"
+    ).length;
+
+    const rows = [
+      ["Total Employees", totalEmployees],
+      ["HR Department Employees", hrEmployees],
+      ["Assignments (All Departments)", totalAssignments],
+      ["Completed Assignments", completedAssignments],
+    ];
+
+    rows.forEach(([metric, value]) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${metric}</td>
+        <td>${value}</td>
+      `;
+      hrBody.appendChild(tr);
+    });
+  }
+
+  if (serviceBody) {
+    serviceBody.innerHTML = "";
+    getDepartmentProjectSummary("Client Service").forEach((row) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${row.name}</td>
+        <td>${row.totalTasks}</td>
+        <td>${row.open}</td>
+        <td>${row.completed}</td>
+      `;
+      serviceBody.appendChild(tr);
+    });
+  }
 }
 
 function renderAdminDashboard() {
@@ -596,6 +749,7 @@ function setupForms() {
     };
     state.resources.push(resource);
     renderResources();
+    renderDepartmentStats();
     addActivity(`Added resource ${resource.name}`, resource.department);
     resourceForm.reset();
   });
@@ -607,34 +761,65 @@ function setupForms() {
     const project = {
       id: nextId(),
       name: data.get("name").trim(),
-      type: data.get("type").trim(),
+      type: data.get("type")?.trim() || "",
       department: data.get("department"),
       startDate: data.get("startDate"),
       endDate: data.get("endDate"),
+      ownerId: data.get("ownerId") || "",
+      template: data.get("template") || "",
+      priority: data.get("priority") || "none",
+      businessHours: data.get("businessHours") || "standard",
+      taskLayout: data.get("taskLayout") || "standard",
+      projectGroup: data.get("projectGroup") || "",
+      tags: data.get("tags")?.split(",").map(t => t.trim()).filter(t => t) || [],
+      description: data.get("description")?.trim() || "",
+      strictProject: data.get("strictProject") === "on",
+      rollup: data.get("rollup") === "on",
     };
     state.projects.push(project);
     renderProjects();
     renderDepartmentStats();
     addActivity(`Created project ${project.name}`, project.department);
     projectForm.reset();
+    alert("Project created successfully!");
   });
 
   const taskForm = document.getElementById("form-task");
   taskForm.addEventListener("submit", (e) => {
     e.preventDefault();
     const data = new FormData(taskForm);
+    const notifyUsers = data.getAll("notifyUsers");
     const task = {
       id: nextId(),
       projectId: data.get("projectId"),
       title: data.get("title").trim(),
-      description: data.get("description").trim(),
-      estimate: data.get("estimate"),
+      description: data.get("description")?.trim() || "",
+      estimate: data.get("estimate") || "",
+      priority: data.get("priority") || "none",
+      taskOwnerId: data.get("taskOwnerId") || "",
+      startDate: data.get("startDate") || "",
+      dueDate: data.get("dueDate") || "",
+      time: data.get("time") || "",
+      notifyUsers: notifyUsers,
     };
     if (!task.projectId) return;
     state.tasks.push(task);
     renderTasks();
     renderDepartmentStats();
     addActivity(`Added task ${task.title}`, "Task creation");
+    
+    // Show notification message
+    if (notifyUsers.length > 0) {
+      const notifyLabels = {
+        po: "Project Owner",
+        to: "Task Owner",
+        tc: "Task Created By",
+        tf: "Task Followers"
+      };
+      const notified = notifyUsers.map(u => notifyLabels[u] || u).join(", ");
+      alert(`Task created! Notifying: ${notified}`);
+    }
+    
     taskForm.reset();
   });
 
@@ -787,11 +972,25 @@ function setupForms() {
       const id = target.getAttribute("data-view-project");
       const proj = state.projects.find((p) => p.id === id);
       if (!proj) return;
-      alert(
-        `Project details:\n\nName: ${proj.name}\nType: ${proj.type}\nDepartment: ${proj.department}\nStart: ${formatDate(
-          proj.startDate
-        )}\nEnd: ${formatDate(proj.endDate)}`
-      );
+      const owner = proj.ownerId ? state.resources.find(r => r.id === proj.ownerId) : null;
+      const details = [
+        `Project: ${proj.name}`,
+        `Type: ${proj.type || "-"}`,
+        `Department: ${proj.department}`,
+        `Owner: ${owner ? owner.name : "Not assigned"}`,
+        `Priority: ${proj.priority || "None"}`,
+        `Template: ${proj.template || "-"}`,
+        `Business Hours: ${proj.businessHours || "Standard"}`,
+        `Task Layout: ${proj.taskLayout || "Standard"}`,
+        `Project Group: ${proj.projectGroup || "-"}`,
+        `Tags: ${proj.tags && proj.tags.length > 0 ? proj.tags.join(", ") : "None"}`,
+        `Start: ${formatDate(proj.startDate)}`,
+        `End: ${formatDate(proj.endDate)}`,
+        `Strict Project: ${proj.strictProject ? "Yes" : "No"}`,
+        `Roll-up Enabled: ${proj.rollup ? "Yes" : "No"}`,
+        `Description: ${proj.description || "None"}`,
+      ].join("\n");
+      alert(details);
     } else if (target.matches("button[data-delete-project]")) {
       const id = target.getAttribute("data-delete-project");
       const proj = state.projects.find((p) => p.id === id);
@@ -830,13 +1029,29 @@ function setupForms() {
       const task = state.tasks.find((t) => t.id === id);
       if (!task) return;
       const project = state.projects.find((p) => p.id === task.projectId);
-      alert(
-        `Task details:\n\nTitle: ${task.title}\nProject: ${
-          project ? project.name : "-"
-        }\nDescription: ${task.description || "-"}\nEstimated hours: ${
-          task.estimate || "-"
-        }`
-      );
+      const owner = task.taskOwnerId ? state.resources.find(r => r.id === task.taskOwnerId) : null;
+      const notifyLabels = {
+        po: "Project Owner",
+        to: "Task Owner",
+        tc: "Task Created By",
+        tf: "Task Followers"
+      };
+      const notified = task.notifyUsers && task.notifyUsers.length > 0
+        ? task.notifyUsers.map(u => notifyLabels[u] || u).join(", ")
+        : "None";
+      const details = [
+        `Task: ${task.title}`,
+        `Project: ${project ? project.name : "-"}`,
+        `Priority: ${task.priority || "None"}`,
+        `Owner: ${owner ? owner.name : "Not assigned"}`,
+        `Start Date: ${formatDate(task.startDate) || "-"}`,
+        `Due Date: ${formatDate(task.dueDate) || "-"}`,
+        `Time: ${task.time || "-"}`,
+        `Estimated Hours: ${task.estimate || "-"}`,
+        `Notify Users: ${notified}`,
+        `Description: ${task.description || "-"}`,
+      ].join("\n");
+      alert(details);
     } else if (target.matches("button[data-delete-task]")) {
       const id = target.getAttribute("data-delete-task");
       const task = state.tasks.find((t) => t.id === id);
