@@ -1,3 +1,58 @@
+
+function createProject(e) {
+  e.preventDefault();
+
+  const templateName = document.getElementById("template").value;
+
+  const newProject = {
+    id: Date.now(),
+    name: document.getElementById("projectName").value,
+    startDate: document.getElementById("startDate").value,
+    endDate: document.getElementById("endDate").value,
+    template: templateName
+  };
+
+  state.projects.push(newProject);
+
+  if (templateName) {
+    const count = createTasksFromTemplate(
+      newProject.id,
+      templateName,
+      newProject.startDate,
+      newProject.endDate
+    );
+    alert(`✅ ${count} tasks created for ${templateName} project`);
+  }
+
+  renderTasks();
+  renderProjects();
+}
+function createTasksFromTemplate(projectId, templateName, startDate, endDate) {
+  if (templateName !== "video") return 0;
+  
+  const templateTasks = getVideoTemplateTasks(); // <-- use the separate file
+  templateTasks.forEach(t => {
+    const task = {
+      id: nextId(),
+      projectId,
+      title: t.title,
+      description: t.description,
+      estimate: t.estimate,
+      phase: t.phase,
+      order: t.order,
+      startDate,
+      dueDate: endDate,
+      priority: "none",
+      taskOwnerId: "",
+      notifyUsers: [],
+      time: ""
+    };
+    state.tasks.push(task);
+  });
+  renderTasks();
+  return templateTasks.length;
+}
+
 // Simple in-memory data model
 const state = {
   resources: [],
@@ -25,6 +80,133 @@ function addActivity(message, meta) {
   };
   state.activity.unshift(entry);
   renderActivity();
+}
+
+// Video Template Task Definitions
+function getVideoTemplateTasks() {
+  return [
+    // Pre-Production Phase
+    { phase: "Pre-Production", title: "Client Inputs", order: 1, estimate: 4, description: "Gather and document all client requirements, expectations, and deliverables." },
+    { phase: "Pre-Production", title: "Project Analysis", order: 2, estimate: 6, description: "Analyze project scope, resources needed, and potential challenges." },
+    { phase: "Pre-Production", title: "Project Planning", order: 3, estimate: 8, description: "Create detailed project plan with milestones and resource allocation." },
+    { phase: "Pre-Production", title: "Project Schedule", order: 4, estimate: 4, description: "Develop comprehensive timeline with deadlines for all phases." },
+    { phase: "Pre-Production", title: "Script", order: 5, estimate: 12, description: "Write and finalize video script with dialogue, narration, and scene descriptions." },
+    { phase: "Pre-Production", title: "Storyboard", order: 6, estimate: 16, description: "Create visual storyboard showing key scenes, shots, and transitions." },
+    
+    // Production Phase
+    { phase: "Production", title: "Voiceover", order: 7, estimate: 8, description: "Record professional voiceover narration for the video." },
+    { phase: "Production", title: "Editing", order: 8, estimate: 24, description: "Edit video footage, add transitions, effects, and synchronize audio." },
+    { phase: "Production", title: "Text Synchronization", order: 9, estimate: 6, description: "Sync on-screen text, captions, and graphics with video timeline." },
+    { phase: "Production", title: "Output", order: 10, estimate: 4, description: "Generate initial video output for review." },
+    
+    // Post-Production Phase
+    { phase: "Post-Production", title: "Final Video", order: 11, estimate: 8, description: "Create final video version with all refinements." },
+    { phase: "Post-Production", title: "Output", order: 12, estimate: 4, description: "Export final video in required format." },
+    { phase: "Post-Production", title: "Compressed", order: 13, estimate: 2, description: "Create compressed version for web/streaming delivery." },
+    { phase: "Post-Production", title: "Final Output", order: 14, estimate: 2, description: "Prepare final deliverables package." },
+    { phase: "Post-Production", title: "Feedback", order: 15, estimate: 4, description: "Collect internal team feedback and review." },
+    { phase: "Post-Production", title: "Client Feedback", order: 16, estimate: 6, description: "Present to client and gather feedback for final adjustments." },
+    { phase: "Post-Production", title: "Final Video", order: 17, estimate: 4, description: "Deliver approved final video to client." },
+  ];
+}
+
+// Create tasks from template
+function createTasksFromTemplate(projectId, templateName, startDate, endDate) {
+  console.log("=== createTasksFromTemplate CALLED ===");
+  console.log("Parameters:", { projectId, templateName, startDate, endDate });
+  
+  if (templateName !== "video") {
+    console.log("Template name doesn't match 'video':", templateName);
+    return 0;
+  }
+  
+  if (!startDate || !endDate) {
+    console.error("Missing dates for template creation:", { startDate, endDate });
+    return 0;
+  }
+  
+  const templateTasks = getVideoTemplateTasks();
+  console.log("Template tasks loaded:", templateTasks.length);
+  
+  // Parse dates - handle both YYYY-MM-DD format and Date objects
+  const start = startDate instanceof Date ? startDate : new Date(startDate + "T00:00:00");
+  const end = endDate instanceof Date ? endDate : new Date(endDate + "T23:59:59");
+  
+  // Validate dates
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+    console.error("Invalid dates:", startDate, endDate);
+    return 0;
+  }
+  
+  const totalDays = Math.max(1, Math.ceil((end - start) / (1000 * 60 * 60 * 24)));
+  
+  // Phase distribution: Pre-Production (35%), Production (40%), Post-Production (25%)
+  const phaseDistribution = {
+    "Pre-Production": { startPercent: 0, endPercent: 0.35, taskCount: 6 },
+    "Production": { startPercent: 0.35, endPercent: 0.75, taskCount: 4 },
+    "Post-Production": { startPercent: 0.75, endPercent: 1.0, taskCount: 7 }
+  };
+  
+  templateTasks.forEach((templateTask) => {
+    const phaseInfo = phaseDistribution[templateTask.phase];
+    const phaseStartDays = Math.floor(totalDays * phaseInfo.startPercent);
+    const phaseEndDays = Math.floor(totalDays * phaseInfo.endPercent);
+    const phaseDuration = phaseEndDays - phaseStartDays;
+    
+    // Calculate task position within phase (0 to 1)
+    // Find first task in this phase
+    const phaseFirstOrder = templateTasks.find(t => t.phase === templateTask.phase)?.order || 1;
+    const phaseOrder = templateTask.order - phaseFirstOrder;
+    const taskPositionInPhase = phaseInfo.taskCount > 1 ? phaseOrder / (phaseInfo.taskCount - 1) : 0;
+    
+    // Calculate task dates
+    const daysFromStart = phaseStartDays + Math.floor(phaseDuration * taskPositionInPhase);
+    const taskStartDate = new Date(start);
+    taskStartDate.setDate(start.getDate() + daysFromStart);
+    
+    // Task duration based on estimate (1 hour estimate = 0.5 days, minimum 1 day)
+    const taskDuration = Math.max(1, Math.ceil((templateTask.estimate || 8) / 16));
+    const taskDueDate = new Date(taskStartDate);
+    taskDueDate.setDate(taskStartDate.getDate() + taskDuration);
+    
+    // Ensure dates don't exceed project boundaries
+    if (taskStartDate < start) taskStartDate.setTime(start.getTime());
+    if (taskDueDate > end) taskDueDate.setTime(end.getTime());
+    if (taskStartDate >= taskDueDate) {
+      taskDueDate.setTime(taskStartDate.getTime() + (24 * 60 * 60 * 1000)); // Add 1 day minimum
+    }
+    
+    const task = {
+      id: nextId(),
+      projectId: projectId,
+      title: templateTask.title,
+      description: templateTask.description || "",
+      estimate: templateTask.estimate || "",
+      priority: "none",
+      taskOwnerId: "",
+      startDate: taskStartDate.toISOString().slice(0, 10),
+      dueDate: taskDueDate.toISOString().slice(0, 10),
+      time: "",
+      notifyUsers: [],
+      phase: templateTask.phase,
+      order: templateTask.order,
+    };
+    
+    state.tasks.push(task);
+    console.log(`Task ${templateTask.order} created: ${templateTask.title} (ID: ${task.id})`);
+  });
+  
+  console.log("=== ALL TASKS CREATED ===");
+  console.log("Total tasks created:", templateTasks.length);
+  console.log("Total tasks in state:", state.tasks.length);
+  
+  // Refresh all views
+  renderTasks();
+  renderDepartmentStats();
+  renderAdminDashboard();
+  addActivity(`Created ${templateTasks.length} tasks from Video template`, "Template");
+  
+  return templateTasks.length;
 }
 
 function formatDate(dateStr) {
@@ -766,8 +948,29 @@ function setupForms() {
     renderProjects();
     renderDepartmentStats();
     addActivity(`Created project ${project.name}`, project.department);
+    
+    // Create tasks from template if template is selected
+    console.log("Project created:", project);
+    console.log("Template value:", project.template);
+    
+    if (project.template === "video") {
+      console.log("Video template detected! Creating tasks...");
+      const taskCount = createTasksFromTemplate(project.id, project.template, project.startDate, project.endDate);
+      console.log("Tasks created:", taskCount);
+      console.log("Total tasks in state:", state.tasks.length);
+      console.log("Tasks for this project:", state.tasks.filter(t => t.projectId === project.id).length);
+      
+      if (taskCount > 0) {
+        alert(`Project "${project.name}" created successfully!\n\n✅ ${taskCount} tasks created from Video template.\n\n📋 Go to the "Tasks" tab to view all tasks.`);
+      } else {
+        alert(`Project "${project.name}" created successfully!\n\n⚠️ Template selected but no tasks were created. Check console for errors.`);
+      }
+    } else {
+      console.log("No template selected or template is:", project.template);
+      alert("Project created successfully!");
+    }
+    
     projectForm.reset();
-    alert("Project created successfully!");
   });
 
   const taskForm = document.getElementById("form-task");
