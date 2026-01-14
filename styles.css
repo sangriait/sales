@@ -966,6 +966,161 @@ select.task-input[name="priority"]:focus {
   height: 16px;
 }
 
+/* Sales Module */
+.sales-header {
+  margin-bottom: 1rem;
+}
+
+.sales-header h2 {
+  margin: 0 0 0.25rem 0;
+}
+
+.sales-subnav {
+  margin-bottom: 1rem;
+}
+
+.sales-subview {
+  display: none;
+}
+
+.sales-subview-active {
+  display: grid;
+}
+
+.sales-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.sales-card-header h3 {
+  margin: 0;
+}
+
+.muted.small {
+  font-size: 0.8rem;
+}
+
+.btn-sales-primary {
+  background: var(--purple-gradient);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 0.5rem 1.2rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+}
+
+.btn-sales-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+}
+
+.btn-sales-secondary {
+  background: #ffffff;
+  color: var(--text-soft);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  padding: 0.5rem 1.1rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-sales-secondary:hover {
+  background: #f9fafb;
+  color: var(--text);
+}
+
+.btn-sales-small {
+  padding: 0.35rem 0.9rem;
+  font-size: 0.8rem;
+}
+
+.sales-table thead {
+  background: #f9fafb;
+}
+
+.sales-table thead th {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.sales-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem 1rem;
+}
+
+.sales-form-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.estimate-form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.estimate-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+.estimate-label-full {
+  grid-column: 1 / -1;
+}
+
+.estimate-items-card {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.25rem;
+  background: #ffffff;
+}
+
+.estimate-items-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.estimate-items-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2.5fr) repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.estimate-summary-row {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.estimate-summary-amount {
+  font-weight: 600;
+}
+
+.estimate-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
 @media (max-width: 768px) {
   .app-shell {
     grid-template-columns: 1fr;

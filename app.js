@@ -1,58 +1,4 @@
 
-function createProject(e) {
-  e.preventDefault();
-
-  const templateName = document.getElementById("template").value;
-
-  const newProject = {
-    id: Date.now(),
-    name: document.getElementById("projectName").value,
-    startDate: document.getElementById("startDate").value,
-    endDate: document.getElementById("endDate").value,
-    template: templateName
-  };
-
-  state.projects.push(newProject);
-
-  if (templateName) {
-    const count = createTasksFromTemplate(
-      newProject.id,
-      templateName,
-      newProject.startDate,
-      newProject.endDate
-    );
-    alert(`✅ ${count} tasks created for ${templateName} project`);
-  }
-
-  renderTasks();
-  renderProjects();
-}
-function createTasksFromTemplate(projectId, templateName, startDate, endDate) {
-  if (templateName !== "video") return 0;
-  
-  const templateTasks = getVideoTemplateTasks(); // <-- use the separate file
-  templateTasks.forEach(t => {
-    const task = {
-      id: nextId(),
-      projectId,
-      title: t.title,
-      description: t.description,
-      estimate: t.estimate,
-      phase: t.phase,
-      order: t.order,
-      startDate,
-      dueDate: endDate,
-      priority: "none",
-      taskOwnerId: "",
-      notifyUsers: [],
-      time: ""
-    };
-    state.tasks.push(task);
-  });
-  renderTasks();
-  return templateTasks.length;
-}
-
 // Simple in-memory data model
 const state = {
   resources: [],
@@ -61,6 +7,8 @@ const state = {
   assignments: [],
   shares: [],
   activity: [],
+  customers: [],
+  estimates: [],
 };
 
 let idCounter = 1;
@@ -265,6 +213,28 @@ function setupOperationsSubnav() {
       subviews.forEach((v) => v.classList.remove("subview-active"));
       const viewEl = document.getElementById(target);
       if (viewEl) viewEl.classList.add("subview-active");
+    });
+  });
+}
+
+// Sales sub navigation
+function setupSalesSubnav() {
+  const salesSubnav = document.querySelector(".sales-subnav");
+  if (!salesSubnav) return;
+
+  const buttons = salesSubnav.querySelectorAll(".subnav-item");
+  const views = document.querySelectorAll(".sales-subview");
+
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const target = btn.dataset.salesSubview;
+
+      buttons.forEach((b) => b.classList.remove("subnav-active"));
+      btn.classList.add("subnav-active");
+
+      views.forEach((v) => v.classList.remove("sales-subview-active"));
+      const viewEl = document.getElementById(target);
+      if (viewEl) viewEl.classList.add("sales-subview-active");
     });
   });
 }
@@ -734,6 +704,62 @@ function renderGlobalKPIs() {
   const onTime = calculateOnTimePercentage(state.assignments);
   document.getElementById("kpi-active-tasks").textContent = activeTasks;
   document.getElementById("kpi-on-time").textContent = `${onTime}%`;
+}
+
+// Sales – Customers & Estimates
+function renderSalesCustomers() {
+  const table = document.querySelector("#table-sales-customers tbody");
+  const selectEstimateCustomer = document.getElementById(
+    "select-estimate-customer"
+  );
+  if (!table) return;
+
+  table.innerHTML = "";
+  if (selectEstimateCustomer) {
+    selectEstimateCustomer.innerHTML =
+      '<option value="">Select customer</option>';
+  }
+
+  state.customers.forEach((c) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${c.name}</td>
+      <td>${c.company || "-"}</td>
+      <td>${c.email || "-"}</td>
+      <td>${c.phone || "-"}</td>
+      <td>₹${(c.receivables || 0).toFixed(2)}</td>
+      <td>₹${(c.credits || 0).toFixed(2)}</td>
+    `;
+    table.appendChild(tr);
+
+    if (selectEstimateCustomer) {
+      const opt = document.createElement("option");
+      opt.value = c.id;
+      opt.textContent = c.name;
+      selectEstimateCustomer.appendChild(opt);
+    }
+  });
+}
+
+function renderSalesEstimates() {
+  const table = document.querySelector("#table-sales-estimates tbody");
+  if (!table) return;
+
+  table.innerHTML = "";
+  state.estimates.forEach((e) => {
+    const customer = state.customers.find((c) => c.id === e.customerId);
+    const statusLabel = e.status || "Draft";
+    const amount = e.amount || 0;
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${formatDate(e.estimateDate)}</td>
+      <td>${e.estimateNumber || "-"}</td>
+      <td>${customer ? customer.name : "-"}</td>
+      <td>${statusLabel}</td>
+      <td>₹${amount.toFixed(2)}</td>
+    `;
+    table.appendChild(tr);
+  });
 }
 
 function renderCharts() {
@@ -1328,6 +1354,91 @@ function setupForms() {
         addActivity("Deleted assignment", "Assignment removed");
       }
     });
+
+  // Sales - Customers
+  const salesCustomerForm = document.getElementById("form-sales-customer");
+  if (salesCustomerForm) {
+    salesCustomerForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const data = new FormData(salesCustomerForm);
+      const customer = {
+        id: nextId(),
+        name: data.get("name").trim(),
+        company: data.get("company")?.trim() || "",
+        email: data.get("email")?.trim() || "",
+        phone: data.get("phone")?.trim() || "",
+        receivables: parseFloat(data.get("receivables") || "0"),
+        credits: parseFloat(data.get("credits") || "0"),
+      };
+      state.customers.push(customer);
+      renderSalesCustomers();
+      addActivity(`Added customer ${customer.name}`, "Sales - Customers");
+      salesCustomerForm.reset();
+    });
+  }
+
+  // Sales - Estimates
+  const salesEstimateForm = document.getElementById("form-sales-estimate");
+  if (salesEstimateForm) {
+    salesEstimateForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const data = new FormData(salesEstimateForm);
+      const customerId = data.get("customerId");
+      if (!customerId) return;
+
+      const quantity = parseFloat(data.get("quantity") || "1");
+      const rate = parseFloat(data.get("rate") || "0");
+      const discount = parseFloat(data.get("discount") || "0");
+      const tax = parseFloat(data.get("tax") || "0");
+
+      const subtotal = quantity * rate;
+      const discountAmount = (subtotal * discount) / 100;
+      const taxable = subtotal - discountAmount;
+      const taxAmount = (taxable * tax) / 100;
+      const total = taxable + taxAmount;
+
+      const estimate = {
+        id: nextId(),
+        customerId,
+        estimateNumber: data.get("estimateNumber") || "",
+        referenceNumber: data.get("referenceNumber") || "",
+        estimateDate: data.get("estimateDate"),
+        expiryDate: data.get("expiryDate") || "",
+        currency: data.get("currency") || "INR",
+        status: "Draft",
+        items: [
+          {
+            description: data.get("itemDescription") || "",
+            quantity,
+            rate,
+            discount,
+            tax,
+            subtotal,
+            total,
+          },
+        ],
+        amount: total,
+        customerNotes: data.get("customerNotes") || "",
+        terms: data.get("terms") || "",
+      };
+
+      state.estimates.push(estimate);
+      renderSalesEstimates();
+      addActivity(
+        `Created estimate ${estimate.estimateNumber || estimate.id}`,
+        "Sales - Estimates"
+      );
+
+      const subtotalDisplay = document.getElementById(
+        "estimate-subtotal-display"
+      );
+      if (subtotalDisplay) {
+        subtotalDisplay.textContent = total.toFixed(2);
+      }
+
+      salesEstimateForm.reset();
+    });
+  }
 }
 
 function seedSampleData() {
@@ -1390,6 +1501,57 @@ function seedSampleData() {
   };
   state.tasks.push(t1, t2);
 
+  // Sample customers
+  const cust1 = {
+    id: nextId(),
+    name: "John Smith Customer",
+    company: "Summarize Labs",
+    email: "john.smith@example.com",
+    phone: "+1 202 555 0101",
+    receivables: 504.0,
+    credits: 0,
+  };
+  const cust2 = {
+    id: nextId(),
+    name: "Anya Enterprises",
+    company: "Anya Enterprises",
+    email: "accounts@anya.example",
+    phone: "+1 202 555 0133",
+    receivables: 487.0,
+    credits: 0,
+  };
+  state.customers.push(cust1, cust2);
+
+  const est1 = {
+    id: nextId(),
+    customerId: cust1.id,
+    estimateNumber: "EST-62803",
+    referenceNumber: "46096",
+    estimateDate: new Date().toISOString().slice(0, 10),
+    expiryDate: "",
+    currency: "INR",
+    status: "Draft",
+    items: [],
+    amount: 504.0,
+    customerNotes: "",
+    terms: "",
+  };
+  const est2 = {
+    id: nextId(),
+    customerId: cust2.id,
+    estimateNumber: "EST-26350",
+    referenceNumber: "24171",
+    estimateDate: new Date().toISOString().slice(0, 10),
+    expiryDate: "",
+    currency: "INR",
+    status: "Invoiced",
+    items: [],
+    amount: 487.0,
+    customerNotes: "",
+    terms: "",
+  };
+  state.estimates.push(est1, est2);
+
   const a1 = {
     id: nextId(),
     projectId: proj1.id,
@@ -1434,11 +1596,14 @@ function initialRender() {
   renderDepartmentStats();
   renderAdminDashboard();
   renderGlobalKPIs();
+  renderSalesCustomers();
+  renderSalesEstimates();
 }
 
 window.addEventListener("DOMContentLoaded", () => {
   setupMainNavigation();
   setupOperationsSubnav();
+  setupSalesSubnav();
   setupForms();
   seedSampleData();
   initialRender();
