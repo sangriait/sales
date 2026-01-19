@@ -773,12 +773,39 @@ function renderSalesCustomers() {
   const selectEstimateCustomer = document.getElementById(
     "select-estimate-customer"
   );
+  const selectOrderCustomer = document.getElementById("select-order-customer");
+  const selectChallanCustomer = document.getElementById("select-challan-customer");
+  const selectInvoiceCustomer = document.getElementById("select-invoice-customer");
+  const selectPaymentCustomer = document.getElementById("select-payment-customer");
+  const selectRecurringCustomer = document.getElementById("select-recurring-customer");
+  const selectCreditNoteCustomer = document.getElementById("select-credit-note-customer");
+
   if (!table) return;
 
   table.innerHTML = "";
+
+  // Reset all dropdowns
   if (selectEstimateCustomer) {
     selectEstimateCustomer.innerHTML =
       '<option value="">Select customer</option>';
+  }
+  if (selectOrderCustomer) {
+    selectOrderCustomer.innerHTML = '<option value="">Select customer</option>';
+  }
+  if (selectChallanCustomer) {
+    selectChallanCustomer.innerHTML = '<option value="">Select customer</option>';
+  }
+  if (selectInvoiceCustomer) {
+    selectInvoiceCustomer.innerHTML = '<option value="">Select customer</option>';
+  }
+  if (selectPaymentCustomer) {
+    selectPaymentCustomer.innerHTML = '<option value="">Select customer</option>';
+  }
+  if (selectRecurringCustomer) {
+    selectRecurringCustomer.innerHTML = '<option value="">Select customer</option>';
+  }
+  if (selectCreditNoteCustomer) {
+    selectCreditNoteCustomer.innerHTML = '<option value="">Select customer</option>';
   }
 
   state.customers.forEach((c) => {
@@ -793,11 +820,48 @@ function renderSalesCustomers() {
     `;
     table.appendChild(tr);
 
+    // Populate all customer dropdowns
     if (selectEstimateCustomer) {
       const opt = document.createElement("option");
       opt.value = c.id;
       opt.textContent = c.name;
       selectEstimateCustomer.appendChild(opt);
+    }
+    if (selectOrderCustomer) {
+      const opt = document.createElement("option");
+      opt.value = c.id;
+      opt.textContent = c.name;
+      selectOrderCustomer.appendChild(opt);
+    }
+    if (selectChallanCustomer) {
+      const opt = document.createElement("option");
+      opt.value = c.id;
+      opt.textContent = c.name;
+      selectChallanCustomer.appendChild(opt);
+    }
+    if (selectInvoiceCustomer) {
+      const opt = document.createElement("option");
+      opt.value = c.id;
+      opt.textContent = c.name;
+      selectInvoiceCustomer.appendChild(opt);
+    }
+    if (selectPaymentCustomer) {
+      const opt = document.createElement("option");
+      opt.value = c.id;
+      opt.textContent = c.name;
+      selectPaymentCustomer.appendChild(opt);
+    }
+    if (selectRecurringCustomer) {
+      const opt = document.createElement("option");
+      opt.value = c.id;
+      opt.textContent = c.name;
+      selectRecurringCustomer.appendChild(opt);
+    }
+    if (selectCreditNoteCustomer) {
+      const opt = document.createElement("option");
+      opt.value = c.id;
+      opt.textContent = c.name;
+      selectCreditNoteCustomer.appendChild(opt);
     }
   });
 }
@@ -817,6 +881,150 @@ function renderSalesEstimates() {
       <td>${e.estimateNumber || "-"}</td>
       <td>${customer ? customer.name : "-"}</td>
       <td>${statusLabel}</td>
+      <td>₹${amount.toFixed(2)}</td>
+    `;
+    table.appendChild(tr);
+  });
+}
+
+// Sales - Sales Orders
+function renderSalesOrders() {
+  const table = document.querySelector("#table-sales-orders tbody");
+  if (!table) return;
+
+  table.innerHTML = "";
+  state.salesOrders.forEach((order) => {
+    const customer = state.customers.find((c) => c.id === order.customerId);
+    const statusLabel = order.status || "Draft";
+    const amount = order.amount || 0;
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${formatDate(order.orderDate)}</td>
+      <td>${order.orderNumber || "-"}</td>
+      <td>${customer ? customer.name : "-"}</td>
+      <td><span class="status-pill status-pill--pending">${statusLabel}</span></td>
+      <td>₹${amount.toFixed(2)}</td>
+    `;
+    table.appendChild(tr);
+  });
+}
+
+// Sales - Delivery Challans
+function renderDeliveryChallans() {
+  const table = document.querySelector("#table-delivery-challans tbody");
+  if (!table) return;
+
+  table.innerHTML = "";
+  state.deliveryChallans.forEach((challan) => {
+    const customer = state.customers.find((c) => c.id === challan.customerId);
+    const statusLabel = challan.status || "Pending";
+    const items = challan.items || 0;
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${formatDate(challan.challanDate)}</td>
+      <td>${challan.challanNumber || "-"}</td>
+      <td>${customer ? customer.name : "-"}</td>
+      <td><span class="status-pill status-pill--pending">${statusLabel}</span></td>
+      <td>${items}</td>
+    `;
+    table.appendChild(tr);
+  });
+}
+
+// Sales - Invoices
+function renderInvoices() {
+  const table = document.querySelector("#table-invoices tbody");
+  const selectPaymentInvoice = document.getElementById("select-payment-invoice");
+  if (!table) return;
+
+  table.innerHTML = "";
+  if (selectPaymentInvoice) {
+    selectPaymentInvoice.innerHTML = '<option value="">Select invoice</option>';
+  }
+
+  state.invoices.forEach((invoice) => {
+    const customer = state.customers.find((c) => c.id === invoice.customerId);
+    const statusLabel = invoice.status || "Draft";
+    const amount = invoice.amount || 0;
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${formatDate(invoice.invoiceDate)}</td>
+      <td>${invoice.invoiceNumber || "-"}</td>
+      <td>${customer ? customer.name : "-"}</td>
+      <td><span class="status-pill status-pill--pending">${statusLabel}</span></td>
+      <td>₹${amount.toFixed(2)}</td>
+    `;
+    table.appendChild(tr);
+
+    if (selectPaymentInvoice) {
+      const opt = document.createElement("option");
+      opt.value = invoice.id;
+      opt.textContent = `${invoice.invoiceNumber || invoice.id} - ${customer ? customer.name : "Unknown"}`;
+      selectPaymentInvoice.appendChild(opt);
+    }
+  });
+}
+
+// Sales - Payments Received
+function renderPayments() {
+  const table = document.querySelector("#table-payments tbody");
+  if (!table) return;
+
+  table.innerHTML = "";
+  state.payments.forEach((payment) => {
+    const customer = state.customers.find((c) => c.id === payment.customerId);
+    const invoice = state.invoices.find((i) => i.id === payment.invoiceId);
+    const amount = payment.amount || 0;
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${formatDate(payment.paymentDate)}</td>
+      <td>${payment.paymentNumber || "-"}</td>
+      <td>${customer ? customer.name : "-"}</td>
+      <td>${invoice ? invoice.invoiceNumber : "-"}</td>
+      <td>₹${amount.toFixed(2)}</td>
+    `;
+    table.appendChild(tr);
+  });
+}
+
+// Sales - Recurring Invoices
+function renderRecurringInvoices() {
+  const table = document.querySelector("#table-recurring-invoices tbody");
+  if (!table) return;
+
+  table.innerHTML = "";
+  state.recurringInvoices.forEach((recurring) => {
+    const customer = state.customers.find((c) => c.id === recurring.customerId);
+    const statusLabel = recurring.status || "Active";
+    const amount = recurring.amount || 0;
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${recurring.profileName || "-"}</td>
+      <td>${customer ? customer.name : "-"}</td>
+      <td>${recurring.frequency || "Monthly"}</td>
+      <td><span class="status-pill status-pill--pending">${statusLabel}</span></td>
+      <td>₹${amount.toFixed(2)}</td>
+    `;
+    table.appendChild(tr);
+  });
+}
+
+// Sales - Credit Notes
+function renderCreditNotes() {
+  const table = document.querySelector("#table-credit-notes tbody");
+  if (!table) return;
+
+  table.innerHTML = "";
+  state.creditNotes.forEach((note) => {
+    const customer = state.customers.find((c) => c.id === note.customerId);
+    const statusLabel = note.status || "Open";
+    const amount = note.amount || 0;
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${formatDate(note.creditNoteDate)}</td>
+      <td>${note.creditNoteNumber || "-"}</td>
+      <td>${customer ? customer.name : "-"}</td>
+      <td><span class="status-pill status-pill--pending">${statusLabel}</span></td>
       <td>₹${amount.toFixed(2)}</td>
     `;
     table.appendChild(tr);
@@ -1505,6 +1713,204 @@ function setupForms() {
       }
 
       salesEstimateForm.reset();
+      alert("Estimate created successfully!");
+    });
+  }
+
+  // Sales - Sales Orders
+  const salesOrderForm = document.getElementById("form-sales-order");
+  if (salesOrderForm) {
+    salesOrderForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const data = new FormData(salesOrderForm);
+      const customerId = data.get("customerId");
+      if (!customerId) return;
+
+      const order = {
+        id: nextId(),
+        customerId,
+        orderNumber: data.get("orderNumber") || "",
+        referenceNumber: data.get("referenceNumber") || "",
+        orderDate: data.get("orderDate"),
+        deliveryDate: data.get("deliveryDate") || "",
+        status: data.get("status") || "Draft",
+        amount: parseFloat(data.get("amount") || "0"),
+        notes: data.get("notes") || "",
+      };
+
+      state.salesOrders.push(order);
+      saveToLocalStorage();
+      renderSalesOrders();
+      addActivity(
+        `Created sales order ${order.orderNumber || order.id}`,
+        "Sales - Orders"
+      );
+      salesOrderForm.reset();
+      alert("Sales Order created successfully!");
+    });
+  }
+
+  // Sales - Delivery Challans
+  const deliveryChallanForm = document.getElementById("form-delivery-challan");
+  if (deliveryChallanForm) {
+    deliveryChallanForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const data = new FormData(deliveryChallanForm);
+      const customerId = data.get("customerId");
+      if (!customerId) return;
+
+      const challan = {
+        id: nextId(),
+        customerId,
+        challanNumber: data.get("challanNumber") || "",
+        challanDate: data.get("challanDate"),
+        deliveryDate: data.get("deliveryDate") || "",
+        status: data.get("status") || "Pending",
+        items: parseInt(data.get("items") || "0"),
+        notes: data.get("notes") || "",
+      };
+
+      state.deliveryChallans.push(challan);
+      saveToLocalStorage();
+      renderDeliveryChallans();
+      addActivity(
+        `Created delivery challan ${challan.challanNumber || challan.id}`,
+        "Sales - Delivery Challans"
+      );
+      deliveryChallanForm.reset();
+      alert("Delivery Challan created successfully!");
+    });
+  }
+
+  // Sales - Invoices
+  const invoiceForm = document.getElementById("form-invoice");
+  if (invoiceForm) {
+    invoiceForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const data = new FormData(invoiceForm);
+      const customerId = data.get("customerId");
+      if (!customerId) return;
+
+      const invoice = {
+        id: nextId(),
+        customerId,
+        invoiceNumber: data.get("invoiceNumber") || "",
+        referenceNumber: data.get("referenceNumber") || "",
+        invoiceDate: data.get("invoiceDate"),
+        dueDate: data.get("dueDate") || "",
+        status: data.get("status") || "Draft",
+        amount: parseFloat(data.get("amount") || "0"),
+        notes: data.get("notes") || "",
+      };
+
+      state.invoices.push(invoice);
+      saveToLocalStorage();
+      renderInvoices();
+      addActivity(
+        `Created invoice ${invoice.invoiceNumber || invoice.id}`,
+        "Sales - Invoices"
+      );
+      invoiceForm.reset();
+      alert("Invoice created successfully!");
+    });
+  }
+
+  // Sales - Payments Received
+  const paymentForm = document.getElementById("form-payment");
+  if (paymentForm) {
+    paymentForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const data = new FormData(paymentForm);
+      const customerId = data.get("customerId");
+      const invoiceId = data.get("invoiceId");
+      if (!customerId) return;
+
+      const payment = {
+        id: nextId(),
+        customerId,
+        invoiceId: invoiceId || "",
+        paymentNumber: data.get("paymentNumber") || "",
+        paymentDate: data.get("paymentDate"),
+        amount: parseFloat(data.get("amount") || "0"),
+        paymentMode: data.get("paymentMode") || "Cash",
+        notes: data.get("notes") || "",
+      };
+
+      state.payments.push(payment);
+      saveToLocalStorage();
+      renderPayments();
+      addActivity(
+        `Received payment ${payment.paymentNumber || payment.id}`,
+        "Sales - Payments"
+      );
+      paymentForm.reset();
+      alert("Payment recorded successfully!");
+    });
+  }
+
+  // Sales - Recurring Invoices
+  const recurringInvoiceForm = document.getElementById("form-recurring-invoice");
+  if (recurringInvoiceForm) {
+    recurringInvoiceForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const data = new FormData(recurringInvoiceForm);
+      const customerId = data.get("customerId");
+      if (!customerId) return;
+
+      const recurring = {
+        id: nextId(),
+        customerId,
+        profileName: data.get("profileName") || "",
+        frequency: data.get("frequency") || "Monthly",
+        startDate: data.get("startDate"),
+        endDate: data.get("endDate") || "",
+        status: data.get("status") || "Active",
+        amount: parseFloat(data.get("amount") || "0"),
+        notes: data.get("notes") || "",
+      };
+
+      state.recurringInvoices.push(recurring);
+      saveToLocalStorage();
+      renderRecurringInvoices();
+      addActivity(
+        `Created recurring invoice ${recurring.profileName || recurring.id}`,
+        "Sales - Recurring Invoices"
+      );
+      recurringInvoiceForm.reset();
+      alert("Recurring Invoice created successfully!");
+    });
+  }
+
+  // Sales - Credit Notes
+  const creditNoteForm = document.getElementById("form-credit-note");
+  if (creditNoteForm) {
+    creditNoteForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const data = new FormData(creditNoteForm);
+      const customerId = data.get("customerId");
+      if (!customerId) return;
+
+      const creditNote = {
+        id: nextId(),
+        customerId,
+        creditNoteNumber: data.get("creditNoteNumber") || "",
+        referenceNumber: data.get("referenceNumber") || "",
+        creditNoteDate: data.get("creditNoteDate"),
+        status: data.get("status") || "Open",
+        amount: parseFloat(data.get("amount") || "0"),
+        reason: data.get("reason") || "",
+        notes: data.get("notes") || "",
+      };
+
+      state.creditNotes.push(creditNote);
+      saveToLocalStorage();
+      renderCreditNotes();
+      addActivity(
+        `Created credit note ${creditNote.creditNoteNumber || creditNote.id}`,
+        "Sales - Credit Notes"
+      );
+      creditNoteForm.reset();
+      alert("Credit Note created successfully!");
     });
   }
 }
@@ -1666,6 +2072,12 @@ function initialRender() {
   renderGlobalKPIs();
   renderSalesCustomers();
   renderSalesEstimates();
+  renderSalesOrders();
+  renderDeliveryChallans();
+  renderInvoices();
+  renderPayments();
+  renderRecurringInvoices();
+  renderCreditNotes();
 }
 
 window.addEventListener("DOMContentLoaded", () => {

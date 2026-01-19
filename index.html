@@ -391,7 +391,69 @@
           </div>
 
           <!-- Sales - Sales Orders -->
-          <div id="sales-orders" class="sales-subview">
+          <div id="sales-orders" class="sales-subview two-column">
+            <div class="card">
+              <div class="sales-card-header">
+                <div>
+                  <h3>Create Sales Order</h3>
+                  <p class="muted small">
+                    Create and manage sales orders from estimates or directly.
+                  </p>
+                </div>
+              </div>
+              <form id="form-sales-order" class="sales-form-grid">
+                <label>
+                  Customer *
+                  <select name="customerId" id="select-order-customer" required>
+                    <option value="">Select customer</option>
+                  </select>
+                </label>
+                <label>
+                  Order #
+                  <input type="text" name="orderNumber" placeholder="SO-0001" required />
+                </label>
+                <label>
+                  Reference #
+                  <input type="text" name="referenceNumber" />
+                </label>
+                <label>
+                  Order Date *
+                  <input type="date" name="orderDate" required />
+                </label>
+                <label>
+                  Delivery Date
+                  <input type="date" name="deliveryDate" />
+                </label>
+                <label>
+                  Status
+                  <select name="status">
+                    <option value="Draft">Draft</option>
+                    <option value="Confirmed">Confirmed</option>
+                    <option value="Processing">Processing</option>
+                    <option value="Shipped">Shipped</option>
+                    <option value="Delivered">Delivered</option>
+                  </select>
+                </label>
+                <label>
+                  Amount (₹) *
+                  <input type="number" name="amount" min="0" step="0.01" placeholder="0.00" required />
+                </label>
+                <label style="grid-column: 1 / -1;">
+                  Notes
+                  <textarea name="notes" rows="3" placeholder="Order notes"></textarea>
+                </label>
+                <div class="sales-form-actions">
+                  <button type="submit" class="btn-sales-primary">
+                    Save Order
+                  </button>
+                  <button type="button" class="btn-sales-secondary"
+                    onclick="document.getElementById('form-sales-order').reset();">
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+
             <div class="card">
               <div class="sales-card-header">
                 <div>
@@ -400,7 +462,6 @@
                     Manage and track all sales orders.
                   </p>
                 </div>
-                <button type="button" class="btn-sales-primary">+ New</button>
               </div>
               <table class="table sales-table" id="table-sales-orders">
                 <thead>
@@ -418,7 +479,63 @@
           </div>
 
           <!-- Sales - Delivery Challans -->
-          <div id="sales-delivery-challans" class="sales-subview">
+          <div id="sales-delivery-challans" class="sales-subview two-column">
+            <div class="card">
+              <div class="sales-card-header">
+                <div>
+                  <h3>Create Delivery Challan</h3>
+                  <p class="muted small">
+                    Create and track delivery challans and shipments.
+                  </p>
+                </div>
+              </div>
+              <form id="form-delivery-challan" class="sales-form-grid">
+                <label>
+                  Customer *
+                  <select name="customerId" id="select-challan-customer" required>
+                    <option value="">Select customer</option>
+                  </select>
+                </label>
+                <label>
+                  Challan #
+                  <input type="text" name="challanNumber" placeholder="DC-0001" required />
+                </label>
+                <label>
+                  Challan Date *
+                  <input type="date" name="challanDate" required />
+                </label>
+                <label>
+                  Delivery Date
+                  <input type="date" name="deliveryDate" />
+                </label>
+                <label>
+                  Status
+                  <select name="status">
+                    <option value="Pending">Pending</option>
+                    <option value="In Transit">In Transit</option>
+                    <option value="Delivered">Delivered</option>
+                  </select>
+                </label>
+                <label>
+                  Number of Items *
+                  <input type="number" name="items" min="0" step="1" placeholder="0" required />
+                </label>
+                <label style="grid-column: 1 / -1;">
+                  Notes
+                  <textarea name="notes" rows="3" placeholder="Delivery notes"></textarea>
+                </label>
+                <div class="sales-form-actions">
+                  <button type="submit" class="btn-sales-primary">
+                    Save Challan
+                  </button>
+                  <button type="button" class="btn-sales-secondary"
+                    onclick="document.getElementById('form-delivery-challan').reset();">
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+
             <div class="card">
               <div class="sales-card-header">
                 <div>
@@ -427,7 +544,6 @@
                     Track delivery challans and shipments.
                   </p>
                 </div>
-                <button type="button" class="btn-sales-primary">+ New</button>
               </div>
               <table class="table sales-table" id="table-delivery-challans">
                 <thead>
@@ -444,8 +560,70 @@
             </div>
           </div>
 
+
           <!-- Sales - Invoices -->
-          <div id="sales-invoices" class="sales-subview">
+          <div id="sales-invoices" class="sales-subview two-column">
+            <div class="card">
+              <div class="sales-card-header">
+                <div>
+                  <h3>Create Invoice</h3>
+                  <p class="muted small">
+                    Create and manage invoices for customers.
+                  </p>
+                </div>
+              </div>
+              <form id="form-invoice" class="sales-form-grid">
+                <label>
+                  Customer *
+                  <select name="customerId" id="select-invoice-customer" required>
+                    <option value="">Select customer</option>
+                  </select>
+                </label>
+                <label>
+                  Invoice #
+                  <input type="text" name="invoiceNumber" placeholder="INV-0001" required />
+                </label>
+                <label>
+                  Reference #
+                  <input type="text" name="referenceNumber" />
+                </label>
+                <label>
+                  Invoice Date *
+                  <input type="date" name="invoiceDate" required />
+                </label>
+                <label>
+                  Due Date
+                  <input type="date" name="dueDate" />
+                </label>
+                <label>
+                  Status
+                  <select name="status">
+                    <option value="Draft">Draft</option>
+                    <option value="Sent">Sent</option>
+                    <option value="Paid">Paid</option>
+                    <option value="Overdue">Overdue</option>
+                  </select>
+                </label>
+                <label>
+                  Amount (₹) *
+                  <input type="number" name="amount" min="0" step="0.01" placeholder="0.00" required />
+                </label>
+                <label style="grid-column: 1 / -1;">
+                  Notes
+                  <textarea name="notes" rows="3" placeholder="Invoice notes"></textarea>
+                </label>
+                <div class="sales-form-actions">
+                  <button type="submit" class="btn-sales-primary">
+                    Save Invoice
+                  </button>
+                  <button type="button" class="btn-sales-secondary"
+                    onclick="document.getElementById('form-invoice').reset();">
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+
             <div class="card">
               <div class="sales-card-header">
                 <div>
@@ -454,7 +632,6 @@
                     Create and manage invoices for customers.
                   </p>
                 </div>
-                <button type="button" class="btn-sales-primary">+ New</button>
               </div>
               <table class="table sales-table" id="table-invoices">
                 <thead>
@@ -472,7 +649,67 @@
           </div>
 
           <!-- Sales - Payments Received -->
-          <div id="sales-payments" class="sales-subview">
+          <div id="sales-payments" class="sales-subview two-column">
+            <div class="card">
+              <div class="sales-card-header">
+                <div>
+                  <h3>Record Payment</h3>
+                  <p class="muted small">
+                    Track payments received from customers.
+                  </p>
+                </div>
+              </div>
+              <form id="form-payment" class="sales-form-grid">
+                <label>
+                  Customer *
+                  <select name="customerId" id="select-payment-customer" required>
+                    <option value="">Select customer</option>
+                  </select>
+                </label>
+                <label>
+                  Invoice
+                  <select name="invoiceId" id="select-payment-invoice">
+                    <option value="">Select invoice</option>
+                  </select>
+                </label>
+                <label>
+                  Payment #
+                  <input type="text" name="paymentNumber" placeholder="PAY-0001" required />
+                </label>
+                <label>
+                  Payment Date *
+                  <input type="date" name="paymentDate" required />
+                </label>
+                <label>
+                  Amount (₹) *
+                  <input type="number" name="amount" min="0" step="0.01" placeholder="0.00" required />
+                </label>
+                <label>
+                  Payment Mode
+                  <select name="paymentMode">
+                    <option value="Cash">Cash</option>
+                    <option value="Bank Transfer">Bank Transfer</option>
+                    <option value="Credit Card">Credit Card</option>
+                    <option value="UPI">UPI</option>
+                    <option value="Cheque">Cheque</option>
+                  </select>
+                </label>
+                <label style="grid-column: 1 / -1;">
+                  Notes
+                  <textarea name="notes" rows="3" placeholder="Payment notes"></textarea>
+                </label>
+                <div class="sales-form-actions">
+                  <button type="submit" class="btn-sales-primary">
+                    Save Payment
+                  </button>
+                  <button type="button" class="btn-sales-secondary"
+                    onclick="document.getElementById('form-payment').reset();">
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+
             <div class="card">
               <div class="sales-card-header">
                 <div>
@@ -481,7 +718,6 @@
                     Track payments received from customers.
                   </p>
                 </div>
-                <button type="button" class="btn-sales-primary">+ New</button>
               </div>
               <table class="table sales-table" id="table-payments">
                 <thead>
@@ -499,7 +735,72 @@
           </div>
 
           <!-- Sales - Recurring Invoices -->
-          <div id="sales-recurring-invoices" class="sales-subview">
+          <div id="sales-recurring-invoices" class="sales-subview two-column">
+            <div class="card">
+              <div class="sales-card-header">
+                <div>
+                  <h3>Create Recurring Invoice</h3>
+                  <p class="muted small">
+                    Manage recurring invoices and subscriptions.
+                  </p>
+                </div>
+              </div>
+              <form id="form-recurring-invoice" class="sales-form-grid">
+                <label>
+                  Customer *
+                  <select name="customerId" id="select-recurring-customer" required>
+                    <option value="">Select customer</option>
+                  </select>
+                </label>
+                <label>
+                  Profile Name *
+                  <input type="text" name="profileName" placeholder="Monthly Subscription" required />
+                </label>
+                <label>
+                  Frequency
+                  <select name="frequency">
+                    <option value="Weekly">Weekly</option>
+                    <option value="Monthly">Monthly</option>
+                    <option value="Quarterly">Quarterly</option>
+                    <option value="Yearly">Yearly</option>
+                  </select>
+                </label>
+                <label>
+                  Start Date *
+                  <input type="date" name="startDate" required />
+                </label>
+                <label>
+                  End Date
+                  <input type="date" name="endDate" />
+                </label>
+                <label>
+                  Status
+                  <select name="status">
+                    <option value="Active">Active</option>
+                    <option value="Paused">Paused</option>
+                    <option value="Stopped">Stopped</option>
+                  </select>
+                </label>
+                <label>
+                  Amount (₹) *
+                  <input type="number" name="amount" min="0" step="0.01" placeholder="0.00" required />
+                </label>
+                <label style="grid-column: 1 / -1;">
+                  Notes
+                  <textarea name="notes" rows="3" placeholder="Recurring invoice notes"></textarea>
+                </label>
+                <div class="sales-form-actions">
+                  <button type="submit" class="btn-sales-primary">
+                    Save Recurring Invoice
+                  </button>
+                  <button type="button" class="btn-sales-secondary"
+                    onclick="document.getElementById('form-recurring-invoice').reset();">
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+
             <div class="card">
               <div class="sales-card-header">
                 <div>
@@ -508,7 +809,6 @@
                     Manage recurring invoices and subscriptions.
                   </p>
                 </div>
-                <button type="button" class="btn-sales-primary">+ New</button>
               </div>
               <table class="table sales-table" id="table-recurring-invoices">
                 <thead>
@@ -526,7 +826,67 @@
           </div>
 
           <!-- Sales - Credit Notes -->
-          <div id="sales-credit-notes" class="sales-subview">
+          <div id="sales-credit-notes" class="sales-subview two-column">
+            <div class="card">
+              <div class="sales-card-header">
+                <div>
+                  <h3>Create Credit Note</h3>
+                  <p class="muted small">
+                    Manage credit notes and refunds.
+                  </p>
+                </div>
+              </div>
+              <form id="form-credit-note" class="sales-form-grid">
+                <label>
+                  Customer *
+                  <select name="customerId" id="select-credit-note-customer" required>
+                    <option value="">Select customer</option>
+                  </select>
+                </label>
+                <label>
+                  Credit Note #
+                  <input type="text" name="creditNoteNumber" placeholder="CN-0001" required />
+                </label>
+                <label>
+                  Reference #
+                  <input type="text" name="referenceNumber" />
+                </label>
+                <label>
+                  Credit Note Date *
+                  <input type="date" name="creditNoteDate" required />
+                </label>
+                <label>
+                  Status
+                  <select name="status">
+                    <option value="Open">Open</option>
+                    <option value="Closed">Closed</option>
+                    <option value="Refunded">Refunded</option>
+                  </select>
+                </label>
+                <label>
+                  Amount (₹) *
+                  <input type="number" name="amount" min="0" step="0.01" placeholder="0.00" required />
+                </label>
+                <label style="grid-column: 1 / -1;">
+                  Reason
+                  <textarea name="reason" rows="2" placeholder="Reason for credit note"></textarea>
+                </label>
+                <label style="grid-column: 1 / -1;">
+                  Notes
+                  <textarea name="notes" rows="2" placeholder="Additional notes"></textarea>
+                </label>
+                <div class="sales-form-actions">
+                  <button type="submit" class="btn-sales-primary">
+                    Save Credit Note
+                  </button>
+                  <button type="button" class="btn-sales-secondary"
+                    onclick="document.getElementById('form-credit-note').reset();">
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+
             <div class="card">
               <div class="sales-card-header">
                 <div>
@@ -535,7 +895,6 @@
                     Manage credit notes and refunds.
                   </p>
                 </div>
-                <button type="button" class="btn-sales-primary">+ New</button>
               </div>
               <table class="table sales-table" id="table-credit-notes">
                 <thead>
