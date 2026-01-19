@@ -1,1072 +1,1095 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>CRMM - Operations & Department Dashboard</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="styles.css" />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-  </head>
-  <body>
-    <div class="app-shell">
-      <aside class="sidebar">
-        <nav class="main-nav">
-          <button class="nav-item active" data-view="operations">
-            <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path d="M3 3h14v14H3V3zm1 1v12h12V4H4z" fill="currentColor"/>
-              <path d="M6 6h8v1H6V6zm0 3h8v1H6V9zm0 3h5v1H6v-1z" fill="currentColor"/>
-            </svg>
-            Operations
-          </button>
-          <button class="nav-item" data-view="marketing">
-            <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path d="M3 3l7 7-7 7V3zm14 0v14h-2V3h2z" fill="currentColor"/>
-            </svg>
-            Marketing
-          </button>
-          <button class="nav-item" data-view="sales">
-            <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path d="M3 3l7 7-7 7V3zm14 0v14h-2V3h2z" fill="currentColor"/>
-            </svg>
-            Sales
-          </button>
-          <button class="nav-item" data-view="accounts">
-            <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path d="M10 2L3 7v11h14V7l-7-5zm0 2.5l5 3.5v8H5v-8l5-3.5z" fill="currentColor"/>
-            </svg>
-            Accounts
-          </button>
-          <button class="nav-item" data-view="hr">
-            <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <circle cx="7" cy="6" r="2" fill="currentColor"/>
-              <circle cx="13" cy="6" r="2" fill="currentColor"/>
-              <path d="M5 14c0-2 1.5-3 5-3s5 1 5 3v2H5v-2z" fill="currentColor"/>
-            </svg>
-            Human Resources
-          </button>
-          <button class="nav-item" data-view="service">
-            <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path d="M3 4h14v2H3V4zm0 4h14v2H3V8zm0 4h10v2H3v-2z" fill="currentColor"/>
-            </svg>
-            Client Service
-          </button>
-        </nav>
-      </aside>
 
-      <main class="main">
-        <header class="topbar">
-          <div class="topbar-left">
-            <svg class="briefcase-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6 0h-4V4h4v2z" fill="currentColor"/>
+<head>
+  <meta charset="UTF-8" />
+  <title>CRMM - Operations & Department Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <nav class="main-nav">
+        <button class="nav-item active" data-view="operations">
+          <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M3 3h14v14H3V3zm1 1v12h12V4H4z" fill="currentColor" />
+            <path d="M6 6h8v1H6V6zm0 3h8v1H6V9zm0 3h5v1H6v-1z" fill="currentColor" />
+          </svg>
+          Operations
+        </button>
+        <button class="nav-item" data-view="marketing">
+          <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M3 3l7 7-7 7V3zm14 0v14h-2V3h2z" fill="currentColor" />
+          </svg>
+          Marketing
+        </button>
+        <button class="nav-item" data-view="sales">
+          <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M3 3l7 7-7 7V3zm14 0v14h-2V3h2z" fill="currentColor" />
+          </svg>
+          Sales
+        </button>
+        <button class="nav-item" data-view="accounts">
+          <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M10 2L3 7v11h14V7l-7-5zm0 2.5l5 3.5v8H5v-8l5-3.5z" fill="currentColor" />
+          </svg>
+          Accounts
+        </button>
+        <button class="nav-item" data-view="hr">
+          <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <circle cx="7" cy="6" r="2" fill="currentColor" />
+            <circle cx="13" cy="6" r="2" fill="currentColor" />
+            <path d="M5 14c0-2 1.5-3 5-3s5 1 5 3v2H5v-2z" fill="currentColor" />
+          </svg>
+          Human Resources
+        </button>
+        <button class="nav-item" data-view="service">
+          <svg class="nav-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M3 4h14v2H3V4zm0 4h14v2H3V8zm0 4h10v2H3v-2z" fill="currentColor" />
+          </svg>
+          Client Service
+        </button>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <svg class="briefcase-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6 0h-4V4h4v2z"
+              fill="currentColor" />
+          </svg>
+          <h1 class="dashboard-title">CRM Dashboard</h1>
+        </div>
+        <div class="topbar-right">
+          <button id="btn-logout" class="btn-logout-purple">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M6 12l4-4-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" />
             </svg>
-            <h1 class="dashboard-title">CRMM Dashboard</h1>
+            Logout
+          </button>
+        </div>
+      </header>
+
+      <section class="content">
+        <!-- Global dashboard -->
+        <section id="view-dashboard" class="view">
+          <div class="cards-grid">
+            <div class="card kpi-card">
+              <h3>Total Projects</h3>
+              <p class="kpi-value" id="kpi-total-projects">0</p>
+            </div>
+            <div class="card kpi-card">
+              <h3>Active Tasks</h3>
+              <p class="kpi-value" id="kpi-active-tasks">0</p>
+            </div>
+            <div class="card kpi-card">
+              <h3>Assigned Resources</h3>
+              <p class="kpi-value" id="kpi-resources">0</p>
+            </div>
+            <div class="card kpi-card">
+              <h3>On‑time Completion %</h3>
+              <p class="kpi-value" id="kpi-on-time">0%</p>
+            </div>
           </div>
-          <div class="topbar-right">
-            <button id="btn-logout" class="btn-logout-purple">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M6 12l4-4-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              Logout
+
+          <div class="two-column chart-row">
+            <div class="card">
+              <h3>Task Status Overview</h3>
+              <canvas id="chart-status"></canvas>
+            </div>
+            <div class="card">
+              <h3>Department Workload</h3>
+              <canvas id="chart-departments"></canvas>
+            </div>
+          </div>
+
+          <div class="two-column">
+            <div class="card">
+              <h3>Department Performance</h3>
+              <table class="table" id="table-departments">
+                <thead>
+                  <tr>
+                    <th>Department</th>
+                    <th>Open Tasks</th>
+                    <th>Completed</th>
+                    <th>On‑time %</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <div class="card">
+              <h3>Recent Activity</h3>
+              <ul class="activity-list" id="activity-log"></ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Department screens backed by live data -->
+        <section id="view-marketing" class="view">
+          <div class="card">
+            <h2>Marketing</h2>
+            <p class="muted">
+              Live view of marketing projects and tasks from Operations. Any
+              Marketing project you add in Operations will appear here.
+            </p>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Project</th>
+                  <th>Type</th>
+                  <th>Total Tasks</th>
+                  <th>Open</th>
+                  <th>Completed</th>
+                </tr>
+              </thead>
+              <tbody id="marketing-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="view-sales" class="view">
+          <div class="sales-header">
+            <h2>Sales</h2>
+            <p class="muted">
+              Manage customers, estimates, and sales documents in one place.
+            </p>
+          </div>
+
+          <div class="subnav sales-subnav">
+            <button class="subnav-item subnav-active" data-sales-subview="sales-customers">
+              Customers
+            </button>
+            <button class="subnav-item" data-sales-subview="sales-estimates">
+              Estimates
+            </button>
+            <button class="subnav-item" data-sales-subview="sales-orders">
+              Sales Orders
+            </button>
+            <button class="subnav-item" data-sales-subview="sales-delivery-challans">
+              Delivery Challans
+            </button>
+            <button class="subnav-item" data-sales-subview="sales-invoices">
+              Invoices
+            </button>
+            <button class="subnav-item" data-sales-subview="sales-payments">
+              Payments Received
+            </button>
+            <button class="subnav-item" data-sales-subview="sales-recurring-invoices">
+              Recurring Invoices
+            </button>
+            <button class="subnav-item" data-sales-subview="sales-credit-notes">
+              Credit Notes
             </button>
           </div>
-        </header>
 
-        <section class="content">
-          <!-- Global dashboard -->
-          <section id="view-dashboard" class="view">
-            <div class="cards-grid">
-              <div class="card kpi-card">
-                <h3>Total Projects</h3>
-                <p class="kpi-value" id="kpi-total-projects">0</p>
-              </div>
-              <div class="card kpi-card">
-                <h3>Active Tasks</h3>
-                <p class="kpi-value" id="kpi-active-tasks">0</p>
-              </div>
-              <div class="card kpi-card">
-                <h3>Assigned Resources</h3>
-                <p class="kpi-value" id="kpi-resources">0</p>
-              </div>
-              <div class="card kpi-card">
-                <h3>On‑time Completion %</h3>
-                <p class="kpi-value" id="kpi-on-time">0%</p>
-              </div>
-            </div>
-
-            <div class="two-column chart-row">
-              <div class="card">
-                <h3>Task Status Overview</h3>
-                <canvas id="chart-status"></canvas>
-              </div>
-              <div class="card">
-                <h3>Department Workload</h3>
-                <canvas id="chart-departments"></canvas>
-              </div>
-            </div>
-
-            <div class="two-column">
-              <div class="card">
-                <h3>Department Performance</h3>
-                <table class="table" id="table-departments">
-                  <thead>
-                    <tr>
-                      <th>Department</th>
-                      <th>Open Tasks</th>
-                      <th>Completed</th>
-                      <th>On‑time %</th>
-                    </tr>
-                  </thead>
-                  <tbody></tbody>
-                </table>
-              </div>
-              <div class="card">
-                <h3>Recent Activity</h3>
-                <ul class="activity-list" id="activity-log"></ul>
-              </div>
-            </div>
-          </section>
-
-          <!-- Department screens backed by live data -->
-          <section id="view-marketing" class="view">
+          <!-- Sales - Customers -->
+          <div id="sales-customers" class="sales-subview sales-subview-active two-column">
             <div class="card">
-              <h2>Marketing</h2>
-              <p class="muted">
-                Live view of marketing projects and tasks from Operations. Any
-                Marketing project you add in Operations will appear here.
-              </p>
-              <table class="table">
+              <div class="sales-card-header">
+                <div>
+                  <h3>All Customers</h3>
+                  <p class="muted small">
+                    Central list of all customers linked to your projects and
+                    estimates.
+                  </p>
+                </div>
+                <button type="button" class="btn-sales-primary"
+                  onclick="document.getElementById('sales-customer-name').focus();">
+                  + New
+                </button>
+              </div>
+              <table class="table sales-table" id="table-sales-customers">
                 <thead>
                   <tr>
-                    <th>Project</th>
-                    <th>Type</th>
-                    <th>Total Tasks</th>
-                    <th>Open</th>
-                    <th>Completed</th>
+                    <th>Name</th>
+                    <th>Company</th>
+                    <th>Email</th>
+                    <th>Work Phone</th>
+                    <th>Receivables</th>
+                    <th>Unused Credits</th>
                   </tr>
                 </thead>
-                <tbody id="marketing-body"></tbody>
+                <tbody></tbody>
               </table>
             </div>
-          </section>
 
-          <section id="view-sales" class="view">
-            <div class="sales-header">
-              <h2>Sales</h2>
-              <p class="muted">
-                Manage customers, estimates, and sales documents in one place.
-              </p>
-            </div>
-
-            <div class="subnav sales-subnav">
-              <button
-                class="subnav-item subnav-active"
-                data-sales-subview="sales-customers"
-              >
-                Customers
-              </button>
-              <button class="subnav-item" data-sales-subview="sales-estimates">
-                Estimates
-              </button>
-            </div>
-
-            <!-- Sales - Customers -->
-            <div
-              id="sales-customers"
-              class="sales-subview sales-subview-active two-column"
-            >
-              <div class="card">
-                <div class="sales-card-header">
-                  <div>
-                    <h3>All Customers</h3>
-                    <p class="muted small">
-                      Central list of all customers linked to your projects and
-                      estimates.
-                    </p>
-                  </div>
-                  <button type="button" class="btn-sales-primary" onclick="document.getElementById('sales-customer-name').focus();">
-                    + New
+            <div class="card">
+              <h3>Create / Edit Customer</h3>
+              <form id="form-sales-customer" class="sales-form-grid">
+                <label>
+                  Customer Name *
+                  <input id="sales-customer-name" type="text" name="name" placeholder="John Smith" required />
+                </label>
+                <label>
+                  Company Name
+                  <input type="text" name="company" placeholder="Acme Corporation" />
+                </label>
+                <label>
+                  Email
+                  <input type="email" name="email" placeholder="customer@example.com" />
+                </label>
+                <label>
+                  Work Phone
+                  <input type="tel" name="phone" placeholder="+1 555 000 0000" />
+                </label>
+                <label>
+                  Receivables (₹)
+                  <input type="number" name="receivables" min="0" step="0.01" placeholder="0.00" />
+                </label>
+                <label>
+                  Unused Credits (₹)
+                  <input type="number" name="credits" min="0" step="0.01" placeholder="0.00" />
+                </label>
+                <div class="sales-form-actions">
+                  <button type="submit" class="btn-sales-primary">
+                    Save Customer
+                  </button>
+                  <button type="button" class="btn-sales-secondary"
+                    onclick="document.getElementById('form-sales-customer').reset();">
+                    Cancel
                   </button>
                 </div>
-                <table class="table sales-table" id="table-sales-customers">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Company</th>
-                      <th>Email</th>
-                      <th>Work Phone</th>
-                      <th>Receivables</th>
-                      <th>Unused Credits</th>
-                    </tr>
-                  </thead>
-                  <tbody></tbody>
-                </table>
-              </div>
-
-              <div class="card">
-                <h3>Create / Edit Customer</h3>
-                <form id="form-sales-customer" class="sales-form-grid">
-                  <label>
-                    Customer Name *
-                    <input
-                      id="sales-customer-name"
-                      type="text"
-                      name="name"
-                      placeholder="John Smith"
-                      required
-                    />
-                  </label>
-                  <label>
-                    Company Name
-                    <input
-                      type="text"
-                      name="company"
-                      placeholder="Acme Corporation"
-                    />
-                  </label>
-                  <label>
-                    Email
-                    <input
-                      type="email"
-                      name="email"
-                      placeholder="customer@example.com"
-                    />
-                  </label>
-                  <label>
-                    Work Phone
-                    <input
-                      type="tel"
-                      name="phone"
-                      placeholder="+1 555 000 0000"
-                    />
-                  </label>
-                  <label>
-                    Receivables (₹)
-                    <input
-                      type="number"
-                      name="receivables"
-                      min="0"
-                      step="0.01"
-                      placeholder="0.00"
-                    />
-                  </label>
-                  <label>
-                    Unused Credits (₹)
-                    <input
-                      type="number"
-                      name="credits"
-                      min="0"
-                      step="0.01"
-                      placeholder="0.00"
-                    />
-                  </label>
-                  <div class="sales-form-actions">
-                    <button type="submit" class="btn-sales-primary">
-                      Save Customer
-                    </button>
-                    <button
-                      type="button"
-                      class="btn-sales-secondary"
-                      onclick="document.getElementById('form-sales-customer').reset();"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </form>
-              </div>
+              </form>
             </div>
+          </div>
 
-            <!-- Sales - Estimates -->
-            <div id="sales-estimates" class="sales-subview">
-              <div class="card">
-                <div class="sales-card-header">
-                  <div>
-                    <h3>New Estimate</h3>
-                    <p class="muted small">
-                      Create professional estimates linked to customers and
-                      projects.
-                    </p>
-                  </div>
-                </div>
-                <form id="form-sales-estimate" class="estimate-form-grid">
-                  <label class="estimate-label">
-                    Customer *
-                    <select
-                      name="customerId"
-                      id="select-estimate-customer"
-                      required
-                    >
-                      <option value="">Select customer</option>
-                    </select>
-                  </label>
-                  <label class="estimate-label">
-                    Estimate #
-                    <input
-                      type="text"
-                      name="estimateNumber"
-                      placeholder="EST-0001"
-                    />
-                  </label>
-                  <label class="estimate-label">
-                    Reference #
-                    <input type="text" name="referenceNumber" />
-                  </label>
-                  <label class="estimate-label">
-                    Estimate Date *
-                    <input type="date" name="estimateDate" required />
-                  </label>
-                  <label class="estimate-label">
-                    Expiry Date
-                    <input type="date" name="expiryDate" />
-                  </label>
-                  <label class="estimate-label">
-                    Currency
-                    <select name="currency">
-                      <option value="INR">INR</option>
-                      <option value="USD">USD</option>
-                      <option value="EUR">EUR</option>
-                    </select>
-                  </label>
-
-                  <div class="estimate-items-card estimate-label-full">
-                    <div class="estimate-items-header">
-                      <h4>Item Table</h4>
-                      <button
-                        type="button"
-                        class="btn-sales-secondary btn-sales-small"
-                        disabled
-                        title="Multiple line items can be added in a future version"
-                      >
-                        + Add New Row
-                      </button>
-                    </div>
-                    <div class="estimate-items-grid">
-                      <label>
-                        Item Details
-                        <input
-                          type="text"
-                          name="itemDescription"
-                          placeholder="Type or click to select an item"
-                        />
-                      </label>
-                      <label>
-                        Quantity
-                        <input
-                          type="number"
-                          name="quantity"
-                          min="1"
-                          step="1"
-                          value="1"
-                        />
-                      </label>
-                      <label>
-                        Rate
-                        <input
-                          type="number"
-                          name="rate"
-                          min="0"
-                          step="0.01"
-                          placeholder="0.00"
-                        />
-                      </label>
-                      <label>
-                        Discount (%)
-                        <input
-                          type="number"
-                          name="discount"
-                          min="0"
-                          max="100"
-                          step="0.01"
-                          value="0"
-                        />
-                      </label>
-                      <label>
-                        Tax (%)
-                        <input
-                          type="number"
-                          name="tax"
-                          min="0"
-                          max="100"
-                          step="0.01"
-                          value="0"
-                        />
-                      </label>
-                    </div>
-                    <div class="estimate-summary-row">
-                      <div>
-                        <span class="muted small">Sub Total</span>
-                      </div>
-                      <div class="estimate-summary-amount">
-                        <span id="estimate-subtotal-display">0.00</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <label class="estimate-label estimate-label-full">
-                    Customer Notes
-                    <textarea
-                      name="customerNotes"
-                      rows="3"
-                      placeholder="Notes visible on the estimate"
-                    ></textarea>
-                  </label>
-                  <label class="estimate-label estimate-label-full">
-                    Terms &amp; Conditions
-                    <textarea
-                      name="terms"
-                      rows="3"
-                      placeholder="Enter the terms and conditions of your business"
-                    ></textarea>
-                  </label>
-
-                  <div class="estimate-actions estimate-label-full">
-                    <button type="submit" class="btn-sales-primary">
-                      Save Estimate
-                    </button>
-                    <button
-                      type="button"
-                      class="btn-sales-secondary"
-                      onclick="document.getElementById('form-sales-estimate').reset();"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </form>
-              </div>
-
-              <div class="card">
-                <div class="sales-card-header">
-                  <div>
-                    <h3>All Estimates</h3>
-                    <p class="muted small">
-                      Track estimate status, customer, and total amount.
-                    </p>
-                  </div>
-                </div>
-                <table class="table sales-table" id="table-sales-estimates">
-                  <thead>
-                    <tr>
-                      <th>Date</th>
-                      <th>Estimate #</th>
-                      <th>Customer</th>
-                      <th>Status</th>
-                      <th>Amount</th>
-                    </tr>
-                  </thead>
-                  <tbody></tbody>
-                </table>
-              </div>
-            </div>
-          </section>
-
-          <section id="view-accounts" class="view">
+          <!-- Sales - Estimates -->
+          <div id="sales-estimates" class="sales-subview">
             <div class="card">
-              <h2>Accounts</h2>
-              <p class="muted">
-                Live summary of projects and tasks owned by the Accounts
-                department.
-              </p>
-              <table class="table">
+              <div class="sales-card-header">
+                <div>
+                  <h3>New Estimate</h3>
+                  <p class="muted small">
+                    Create professional estimates linked to customers and
+                    projects.
+                  </p>
+                </div>
+              </div>
+              <form id="form-sales-estimate" class="estimate-form-grid">
+                <label class="estimate-label">
+                  Customer *
+                  <select name="customerId" id="select-estimate-customer" required>
+                    <option value="">Select customer</option>
+                  </select>
+                </label>
+                <label class="estimate-label">
+                  Estimate #
+                  <input type="text" name="estimateNumber" placeholder="EST-0001" />
+                </label>
+                <label class="estimate-label">
+                  Reference #
+                  <input type="text" name="referenceNumber" />
+                </label>
+                <label class="estimate-label">
+                  Estimate Date *
+                  <input type="date" name="estimateDate" required />
+                </label>
+                <label class="estimate-label">
+                  Expiry Date
+                  <input type="date" name="expiryDate" />
+                </label>
+                <label class="estimate-label">
+                  Currency
+                  <select name="currency">
+                    <option value="INR">INR</option>
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                  </select>
+                </label>
+
+                <div class="estimate-items-card estimate-label-full">
+                  <div class="estimate-items-header">
+                    <h4>Item Table</h4>
+                    <button type="button" class="btn-sales-secondary btn-sales-small" disabled
+                      title="Multiple line items can be added in a future version">
+                      + Add New Row
+                    </button>
+                  </div>
+                  <div class="estimate-items-grid">
+                    <label>
+                      Item Details
+                      <input type="text" name="itemDescription" placeholder="Type or click to select an item" />
+                    </label>
+                    <label>
+                      Quantity
+                      <input type="number" name="quantity" min="1" step="1" value="1" />
+                    </label>
+                    <label>
+                      Rate
+                      <input type="number" name="rate" min="0" step="0.01" placeholder="0.00" />
+                    </label>
+                    <label>
+                      Discount (%)
+                      <input type="number" name="discount" min="0" max="100" step="0.01" value="0" />
+                    </label>
+                    <label>
+                      Tax (%)
+                      <input type="number" name="tax" min="0" max="100" step="0.01" value="0" />
+                    </label>
+                  </div>
+                  <div class="estimate-summary-row">
+                    <div>
+                      <span class="muted small">Sub Total</span>
+                    </div>
+                    <div class="estimate-summary-amount">
+                      <span id="estimate-subtotal-display">0.00</span>
+                    </div>
+                  </div>
+                </div>
+
+                <label class="estimate-label estimate-label-full">
+                  Customer Notes
+                  <textarea name="customerNotes" rows="3" placeholder="Notes visible on the estimate"></textarea>
+                </label>
+                <label class="estimate-label estimate-label-full">
+                  Terms &amp; Conditions
+                  <textarea name="terms" rows="3"
+                    placeholder="Enter the terms and conditions of your business"></textarea>
+                </label>
+
+                <div class="estimate-actions estimate-label-full">
+                  <button type="submit" class="btn-sales-primary">
+                    Save Estimate
+                  </button>
+                  <button type="button" class="btn-sales-secondary"
+                    onclick="document.getElementById('form-sales-estimate').reset();">
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <div class="card">
+              <div class="sales-card-header">
+                <div>
+                  <h3>All Estimates</h3>
+                  <p class="muted small">
+                    Track estimate status, customer, and total amount.
+                  </p>
+                </div>
+              </div>
+              <table class="table sales-table" id="table-sales-estimates">
                 <thead>
                   <tr>
-                    <th>Project</th>
-                    <th>Type</th>
-                    <th>Total Tasks</th>
-                    <th>Open</th>
-                    <th>Completed</th>
+                    <th>Date</th>
+                    <th>Estimate #</th>
+                    <th>Customer</th>
+                    <th>Status</th>
+                    <th>Amount</th>
                   </tr>
                 </thead>
-                <tbody id="accounts-body"></tbody>
+                <tbody></tbody>
               </table>
             </div>
-          </section>
+          </div>
 
-          <!-- OPERATIONS: main requirement -->
-          <section id="view-operations" class="view view-active">
-            <div class="subnav">
-              <button class="subnav-item" data-subview="ops-admin-dash">
-                Admin Dashboard
-              </button>
-              <button class="subnav-item" data-subview="ops-resources">
-                Resources
-              </button>
-              <button class="subnav-item subnav-active" data-subview="ops-projects">
-                Projects
-              </button>
-              <button class="subnav-item" data-subview="ops-tasks">
-                Tasks
-              </button>
-              <button class="subnav-item" data-subview="ops-assign">
-                Assignments
-              </button>
-              <button class="subnav-item" data-subview="ops-individual-dash">
-                Individual Dashboard
-              </button>
-              <button class="subnav-item" data-subview="ops-share">
-                Share
-              </button>
+          <!-- Sales - Sales Orders -->
+          <div id="sales-orders" class="sales-subview">
+            <div class="card">
+              <div class="sales-card-header">
+                <div>
+                  <h3>All Sales Orders</h3>
+                  <p class="muted small">
+                    Manage and track all sales orders.
+                  </p>
+                </div>
+                <button type="button" class="btn-sales-primary">+ New</button>
+              </div>
+              <table class="table sales-table" id="table-sales-orders">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Order #</th>
+                    <th>Customer</th>
+                    <th>Status</th>
+                    <th>Amount</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
             </div>
+          </div>
 
-            <!-- Operations - Add Resources -->
-            <div
-              id="ops-resources"
-              class="subview subview-active two-column"
-            >
-              <div class="card">
-                <h2>Add Resources</h2>
-                <form id="form-resource" class="form-grid">
-                  <label>
-                    Full Name
-                    <input
-                      type="text"
-                      name="name"
-                      placeholder="Enter resource name"
-                      required
-                    />
-                  </label>
-                  <label>
-                    Role
-                    <input
-                      type="text"
-                      name="role"
-                      placeholder="Designer, Developer, etc."
-                      required
-                    />
-                  </label>
-                  <label>
-                    Department
-                    <select name="department" required>
-                      <option value="">Select department</option>
-                      <option>Marketing</option>
-                      <option>Sales</option>
-                      <option>Accounts</option>
-                      <option>Operations</option>
-                      <option>Human Resources</option>
-                      <option>Client Service</option>
-                    </select>
-                  </label>
-                  <label>
-                    Email
-                    <input
-                      type="email"
-                      name="email"
-                      placeholder="name@example.com"
-                      required
-                    />
-                  </label>
-                  <button type="submit" class="btn-primary">
-                    Save Resource
-                  </button>
-                </form>
+          <!-- Sales - Delivery Challans -->
+          <div id="sales-delivery-challans" class="sales-subview">
+            <div class="card">
+              <div class="sales-card-header">
+                <div>
+                  <h3>All Delivery Challans</h3>
+                  <p class="muted small">
+                    Track delivery challans and shipments.
+                  </p>
+                </div>
+                <button type="button" class="btn-sales-primary">+ New</button>
               </div>
-              <div class="card">
-                <h3>Resources</h3>
-                <table class="table" id="table-resources">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Role</th>
-                      <th>Department</th>
-                      <th>Email</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody></tbody>
-                </table>
-              </div>
+              <table class="table sales-table" id="table-delivery-challans">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Challan #</th>
+                    <th>Customer</th>
+                    <th>Status</th>
+                    <th>Items</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
             </div>
+          </div>
 
-            <!-- Operations - Add Project -->
-            <div id="ops-projects" class="subview">
-              <div class="card project-form-card">
-                <h2 class="project-form-title">
-                  <span class="plus-icon">+</span> Create New Project
-                </h2>
-                <form id="form-project" class="project-form-grid">
-                  <label class="project-label">
-                    Project Name
-                    <input
-                      type="text"
-                      name="name"
-                      class="project-input"
-                      placeholder="Enter project name"
-                      required
-                    />
-                  </label>
-                  <label class="project-label">
-                    Type
-                    <input
-                      type="text"
-                      name="type"
-                      class="project-input"
-                      placeholder="Client/Internal"
-                      value="Client/Internal"
-                    />
-                  </label>
-                  <label class="project-label">
-                    Department
-                    <select name="department" class="project-input" required>
-                      <option value="">Select department</option>
-                      <option>Marketing</option>
-                      <option>Sales</option>
-                      <option>Accounts</option>
-                      <option>Operations</option>
-                      <option>Human Resources</option>
-                      <option>Client Service</option>
-                    </select>
-                  </label>
-                  <label class="project-label">
-                    Priority
-                    <select name="priority" class="project-input">
-                      <option value="none">None</option>
-                      <option value="low">Low</option>
-                      <option value="medium">Medium</option>
-                      <option value="high">High</option>
-                    </select>
-                  </label>
-                  <label class="project-label">
-                    Template
-                    <select name="template" id="project-template" class="project-input">
-                      <option value="">No Template</option>
-                      <option value="video">Video Template</option>
-                    </select>
-                  </label>
-                  <label class="project-label">
-                    Start Date
-                    <div class="date-input-wrapper">
-                      <input type="date" name="startDate" class="project-input date-input" required />
-                      <svg class="calendar-icon" width="18" height="18" viewBox="0 0 18 18" fill="none">
-                        <path d="M14 3h1a1 1 0 011 1v11a1 1 0 01-1 1H3a1 1 0 01-1-1V4a1 1 0 011-1h1m0-1v2m8-2v2M5 7h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                      </svg>
-                    </div>
-                  </label>
-                  <label class="project-label">
-                    End Date
-                    <div class="date-input-wrapper">
-                      <input type="date" name="endDate" class="project-input date-input" required />
-                      <svg class="calendar-icon" width="18" height="18" viewBox="0 0 18 18" fill="none">
-                        <path d="M14 3h1a1 1 0 011 1v11a1 1 0 01-1 1H3a1 1 0 01-1-1V4a1 1 0 011-1h1m0-1v2m8-2v2M5 7h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                      </svg>
-                    </div>
-                  </label>
-                  <label class="project-label project-label-full">
-                    Description
-                    <textarea
-                      name="description"
-                      class="project-textarea"
-                      placeholder="Enter project description"
-                      rows="4"
-                    ></textarea>
-                  </label>
-                  <!-- Hidden fields for other project properties -->
-                  <input type="hidden" name="ownerId" value="" />
-                  <input type="hidden" name="businessHours" value="standard" />
-                  <input type="hidden" name="taskLayout" value="standard" />
-                  <input type="hidden" name="projectGroup" value="" />
-                  <input type="hidden" name="tags" value="" />
-                  <input type="hidden" name="strictProject" value="off" />
-                  <input type="hidden" name="rollup" value="off" />
-                  <div class="project-form-actions">
-                    <button type="submit" class="btn-create-project">
-                      <span class="plus-icon-small">+</span> Create Project
-                    </button>
-                  </div>
-                </form>
+          <!-- Sales - Invoices -->
+          <div id="sales-invoices" class="sales-subview">
+            <div class="card">
+              <div class="sales-card-header">
+                <div>
+                  <h3>All Invoices</h3>
+                  <p class="muted small">
+                    Create and manage invoices for customers.
+                  </p>
+                </div>
+                <button type="button" class="btn-sales-primary">+ New</button>
               </div>
-              <div class="card projects-table-card">
-                <h3 class="projects-table-title">
-                  <svg class="bar-chart-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <path d="M3 15h4v-10H3v10zm6-5h4V5H9v5zm6-8h4v13h-4V2z" fill="currentColor"/>
-                  </svg>
-                  All Projects
-                </h3>
-                <table class="projects-table" id="table-projects">
-                  <thead>
-                    <tr>
-                      <th>NAME</th>
-                      <th>TYPE</th>
-                      <th>DEPARTMENT</th>
-                      <th>PRIORITY</th>
-                      <th>DURATION</th>
-                      <th>ACTIONS</th>
-                    </tr>
-                  </thead>
-                  <tbody></tbody>
-                </table>
-              </div>
+              <table class="table sales-table" id="table-invoices">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Invoice #</th>
+                    <th>Customer</th>
+                    <th>Status</th>
+                    <th>Amount</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
             </div>
+          </div>
 
-            <!-- Operations - Add Tasks -->
-            <div id="ops-tasks" class="subview">
-              <div class="task-form-container">
-                <div class="task-form-card">
-                  <h2 class="task-form-title">New Task</h2>
-                  <form id="form-task" class="task-form-grid">
-                    <label class="task-label">
-                      Project *
-                      <select name="projectId" id="select-task-project" class="task-input" required>
-                        <option value="">Select project</option>
-                      </select>
-                    </label>
-                    <label class="task-label">
-                      Task Owner
-                      <select name="taskOwnerId" id="select-task-owner" class="task-input">
-                        <option value="">Select owner</option>
-                      </select>
-                    </label>
-                    <label class="task-label task-label-full">
-                      Task Title *
-                      <input
-                        type="text"
-                        name="title"
-                        class="task-input"
-                        placeholder="Enter task title"
-                        required
-                      />
-                    </label>
-                    <label class="task-label">
-                      Priority
-                      <select name="priority" class="task-input">
-                        <option value="none">! None</option>
-                        <option value="low">! Low</option>
-                        <option value="medium">! Medium</option>
-                        <option value="high">! High</option>
-                      </select>
-                    </label>
-                    <label class="task-label">
-                      Start Date
-                      <input type="date" name="startDate" class="task-input" />
-                    </label>
-                    <label class="task-label">
-                      Estimated Hours
-                      <input
-                        type="number"
-                        name="estimate"
-                        class="task-input"
-                        min="0"
-                        step="0.5"
-                        placeholder="e.g. 8"
-                      />
-                    </label>
-                    <label class="task-label task-label-full">
-                      Description
-                      <textarea
-                        name="description"
-                        class="task-input task-textarea"
-                        placeholder="Type @ to mention users. Type # to mention a Task or an Issue."
-                        rows="4"
-                      ></textarea>
-                    </label>
-                    <label class="task-label task-label-full task-notify-section">
-                      Notify users associated with the Task *
-                      <div class="task-notify-options">
-                        <label class="task-checkbox-label">
-                          <input type="checkbox" name="notifyUsers" value="po" class="task-checkbox" />
-                          <span>PO - Project Owner</span>
-                        </label>
-                        <label class="task-checkbox-label">
-                          <input type="checkbox" name="notifyUsers" value="to" class="task-checkbox" />
-                          <span>TO - Task Owner</span>
-                        </label>
-                        <label class="task-checkbox-label">
-                          <input type="checkbox" name="notifyUsers" value="tc" class="task-checkbox" />
-                          <span>TC - Task Created By</span>
-                        </label>
-                        <label class="task-checkbox-label">
-                          <input type="checkbox" name="notifyUsers" value="tf" class="task-checkbox" />
-                          <span>TF - Task Followers</span>
-                        </label>
-                      </div>
-                    </label>
-                    <div class="task-form-actions">
-                      <button type="submit" class="btn-task-primary">
-                        Add Task
-                      </button>
-                      <button type="button" class="btn-task-cancel" onclick="document.getElementById('form-task').reset();">
-                        Cancel
-                      </button>
-                    </div>
-                  </form>
-                  <button class="scroll-down-btn" id="scroll-down-task" title="Scroll down">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                      <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- Sales - Payments Received -->
+          <div id="sales-payments" class="sales-subview">
+            <div class="card">
+              <div class="sales-card-header">
+                <div>
+                  <h3>All Payments Received</h3>
+                  <p class="muted small">
+                    Track payments received from customers.
+                  </p>
+                </div>
+                <button type="button" class="btn-sales-primary">+ New</button>
+              </div>
+              <table class="table sales-table" id="table-payments">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Payment #</th>
+                    <th>Customer</th>
+                    <th>Invoice #</th>
+                    <th>Amount</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Sales - Recurring Invoices -->
+          <div id="sales-recurring-invoices" class="sales-subview">
+            <div class="card">
+              <div class="sales-card-header">
+                <div>
+                  <h3>All Recurring Invoices</h3>
+                  <p class="muted small">
+                    Manage recurring invoices and subscriptions.
+                  </p>
+                </div>
+                <button type="button" class="btn-sales-primary">+ New</button>
+              </div>
+              <table class="table sales-table" id="table-recurring-invoices">
+                <thead>
+                  <tr>
+                    <th>Profile Name</th>
+                    <th>Customer</th>
+                    <th>Frequency</th>
+                    <th>Status</th>
+                    <th>Amount</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Sales - Credit Notes -->
+          <div id="sales-credit-notes" class="sales-subview">
+            <div class="card">
+              <div class="sales-card-header">
+                <div>
+                  <h3>All Credit Notes</h3>
+                  <p class="muted small">
+                    Manage credit notes and refunds.
+                  </p>
+                </div>
+                <button type="button" class="btn-sales-primary">+ New</button>
+              </div>
+              <table class="table sales-table" id="table-credit-notes">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Credit Note #</th>
+                    <th>Customer</th>
+                    <th>Status</th>
+                    <th>Amount</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-accounts" class="view">
+          <div class="card">
+            <h2>Accounts</h2>
+            <p class="muted">
+              Live summary of projects and tasks owned by the Accounts
+              department.
+            </p>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Project</th>
+                  <th>Type</th>
+                  <th>Total Tasks</th>
+                  <th>Open</th>
+                  <th>Completed</th>
+                </tr>
+              </thead>
+              <tbody id="accounts-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- OPERATIONS: main requirement -->
+        <section id="view-operations" class="view view-active">
+          <div class="subnav">
+            <button class="subnav-item" data-subview="ops-admin-dash">
+              Admin Dashboard
+            </button>
+            <button class="subnav-item" data-subview="ops-resources">
+              Resources
+            </button>
+            <button class="subnav-item subnav-active" data-subview="ops-projects">
+              Projects
+            </button>
+            <button class="subnav-item" data-subview="ops-tasks">
+              Tasks
+            </button>
+            <button class="subnav-item" data-subview="ops-assign">
+              Assignments
+            </button>
+            <button class="subnav-item" data-subview="ops-individual-dash">
+              Individual Dashboard
+            </button>
+            <button class="subnav-item" data-subview="ops-share">
+              Share
+            </button>
+          </div>
+
+          <!-- Operations - Add Resources -->
+          <div id="ops-resources" class="subview subview-active two-column">
+            <div class="card">
+              <h2>Add Resources</h2>
+              <form id="form-resource" class="form-grid">
+                <label>
+                  Full Name
+                  <input type="text" name="name" placeholder="Enter resource name" required />
+                </label>
+                <label>
+                  Role
+                  <input type="text" name="role" placeholder="Designer, Developer, etc." required />
+                </label>
+                <label>
+                  Department
+                  <select name="department" required>
+                    <option value="">Select department</option>
+                    <option>Marketing</option>
+                    <option>Sales</option>
+                    <option>Accounts</option>
+                    <option>Operations</option>
+                    <option>Human Resources</option>
+                    <option>Client Service</option>
+                  </select>
+                </label>
+                <label>
+                  Email
+                  <input type="email" name="email" placeholder="name@example.com" required />
+                </label>
+                <button type="submit" class="btn-primary">
+                  Save Resource
+                </button>
+              </form>
+            </div>
+            <div class="card">
+              <h3>Resources</h3>
+              <table class="table" id="table-resources">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Role</th>
+                    <th>Department</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Operations - Add Project -->
+          <div id="ops-projects" class="subview">
+            <div class="card project-form-card">
+              <h2 class="project-form-title">
+                <span class="plus-icon">+</span> Create New Project
+              </h2>
+              <form id="form-project" class="project-form-grid">
+                <label class="project-label">
+                  Project Name
+                  <input type="text" name="name" class="project-input" placeholder="Enter project name" required />
+                </label>
+                <label class="project-label">
+                  Type
+                  <input type="text" name="type" class="project-input" placeholder="Client/Internal"
+                    value="Client/Internal" />
+                </label>
+                <label class="project-label">
+                  Department
+                  <select name="department" class="project-input" required>
+                    <option value="">Select department</option>
+                    <option>Marketing</option>
+                    <option>Sales</option>
+                    <option>Accounts</option>
+                    <option>Operations</option>
+                    <option>Human Resources</option>
+                    <option>Client Service</option>
+                  </select>
+                </label>
+                <label class="project-label">
+                  Priority
+                  <select name="priority" class="project-input">
+                    <option value="none">None</option>
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                </label>
+                <label class="project-label">
+                  Template
+                  <select name="template" id="project-template" class="project-input">
+                    <option value="">No Template</option>
+                    <option value="video">Video Template</option>
+                  </select>
+                </label>
+                <label class="project-label">
+                  Start Date
+                  <div class="date-input-wrapper">
+                    <input type="date" name="startDate" class="project-input date-input" required />
+                    <svg class="calendar-icon" width="18" height="18" viewBox="0 0 18 18" fill="none">
+                      <path d="M14 3h1a1 1 0 011 1v11a1 1 0 01-1 1H3a1 1 0 01-1-1V4a1 1 0 011-1h1m0-1v2m8-2v2M5 7h8"
+                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
                     </svg>
+                  </div>
+                </label>
+                <label class="project-label">
+                  End Date
+                  <div class="date-input-wrapper">
+                    <input type="date" name="endDate" class="project-input date-input" required />
+                    <svg class="calendar-icon" width="18" height="18" viewBox="0 0 18 18" fill="none">
+                      <path d="M14 3h1a1 1 0 011 1v11a1 1 0 01-1 1H3a1 1 0 01-1-1V4a1 1 0 011-1h1m0-1v2m8-2v2M5 7h8"
+                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                    </svg>
+                  </div>
+                </label>
+                <label class="project-label project-label-full">
+                  Description
+                  <textarea name="description" class="project-textarea" placeholder="Enter project description"
+                    rows="4"></textarea>
+                </label>
+                <!-- Hidden fields for other project properties -->
+                <input type="hidden" name="ownerId" value="" />
+                <input type="hidden" name="businessHours" value="standard" />
+                <input type="hidden" name="taskLayout" value="standard" />
+                <input type="hidden" name="projectGroup" value="" />
+                <input type="hidden" name="tags" value="" />
+                <input type="hidden" name="strictProject" value="off" />
+                <input type="hidden" name="rollup" value="off" />
+                <div class="project-form-actions">
+                  <button type="submit" class="btn-create-project">
+                    <span class="plus-icon-small">+</span> Create Project
                   </button>
                 </div>
-              </div>
-              <div class="card" style="margin-top: 1.5rem;">
-                <h3>All Tasks</h3>
-                <table class="table" id="table-tasks">
-                  <thead>
-                    <tr>
-                      <th>Project</th>
-                      <th>Task</th>
-                      <th>Priority</th>
-                      <th>Status</th>
-                      <th>Est. Hours</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody></tbody>
-                </table>
-              </div>
+              </form>
             </div>
+            <div class="card projects-table-card">
+              <h3 class="projects-table-title">
+                <svg class="bar-chart-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path d="M3 15h4v-10H3v10zm6-5h4V5H9v5zm6-8h4v13h-4V2z" fill="currentColor" />
+                </svg>
+                All Projects
+              </h3>
+              <table class="projects-table" id="table-projects">
+                <thead>
+                  <tr>
+                    <th>NAME</th>
+                    <th>TYPE</th>
+                    <th>DEPARTMENT</th>
+                    <th>PRIORITY</th>
+                    <th>DURATION</th>
+                    <th>ACTIONS</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
 
-            <!-- Operations - Assign Tasks -->
-            <div id="ops-assign" class="subview two-column">
-              <div class="card">
-                <h2>Assign Tasks to Individuals</h2>
-                <form id="form-assignment" class="form-grid">
-                  <label>
-                    Project
-                    <select
-                      name="projectId"
-                      id="select-assign-project"
-                      required
-                    >
+          <!-- Operations - Add Tasks -->
+          <div id="ops-tasks" class="subview">
+            <div class="task-form-container">
+              <div class="task-form-card">
+                <h2 class="task-form-title">New Task</h2>
+                <form id="form-task" class="task-form-grid">
+                  <label class="task-label">
+                    Project *
+                    <select name="projectId" id="select-task-project" class="task-input" required>
                       <option value="">Select project</option>
                     </select>
                   </label>
-                  <label>
-                    Task
-                    <select name="taskId" id="select-assign-task" required>
-                      <option value="">Select task</option>
+                  <label class="task-label">
+                    Task Owner
+                    <select name="taskOwnerId" id="select-task-owner" class="task-input">
+                      <option value="">Select owner</option>
                     </select>
                   </label>
-                  <label>
-                    Resource
-                    <select
-                      name="resourceId"
-                      id="select-assign-resource"
-                      required
-                    >
-                      <option value="">Select individual</option>
+                  <label class="task-label task-label-full">
+                    Task Title *
+                    <input type="text" name="title" class="task-input" placeholder="Enter task title" required />
+                  </label>
+                  <label class="task-label">
+                    Priority
+                    <select name="priority" class="task-input">
+                      <option value="none">! None</option>
+                      <option value="low">! Low</option>
+                      <option value="medium">! Medium</option>
+                      <option value="high">! High</option>
                     </select>
                   </label>
-                  <label>
-                    Due Date
-                    <input type="date" name="dueDate" required />
+                  <label class="task-label">
+                    Start Date
+                    <input type="date" name="startDate" class="task-input" />
                   </label>
-                  <button type="submit" class="btn-primary">
-                    Assign Task
-                  </button>
+                  <label class="task-label">
+                    Estimated Hours
+                    <input type="number" name="estimate" class="task-input" min="0" step="0.5" placeholder="e.g. 8" />
+                  </label>
+                  <label class="task-label task-label-full">
+                    Description
+                    <textarea name="description" class="task-input task-textarea"
+                      placeholder="Type @ to mention users. Type # to mention a Task or an Issue." rows="4"></textarea>
+                  </label>
+                  <label class="task-label task-label-full task-notify-section">
+                    Notify users associated with the Task *
+                    <div class="task-notify-options">
+                      <label class="task-checkbox-label">
+                        <input type="checkbox" name="notifyUsers" value="po" class="task-checkbox" />
+                        <span>PO - Project Owner</span>
+                      </label>
+                      <label class="task-checkbox-label">
+                        <input type="checkbox" name="notifyUsers" value="to" class="task-checkbox" />
+                        <span>TO - Task Owner</span>
+                      </label>
+                      <label class="task-checkbox-label">
+                        <input type="checkbox" name="notifyUsers" value="tc" class="task-checkbox" />
+                        <span>TC - Task Created By</span>
+                      </label>
+                      <label class="task-checkbox-label">
+                        <input type="checkbox" name="notifyUsers" value="tf" class="task-checkbox" />
+                        <span>TF - Task Followers</span>
+                      </label>
+                    </div>
+                  </label>
+                  <div class="task-form-actions">
+                    <button type="submit" class="btn-task-primary">
+                      Add Task
+                    </button>
+                    <button type="button" class="btn-task-cancel"
+                      onclick="document.getElementById('form-task').reset();">
+                      Cancel
+                    </button>
+                  </div>
                 </form>
-              </div>
-              <div class="card">
-                <h3>Assignments</h3>
-                <table class="table" id="table-assignments">
-                  <thead>
-                    <tr>
-                      <th>Project</th>
-                      <th>Task</th>
-                      <th>Individual</th>
-                      <th>Due</th>
-                      <th>Status</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody></tbody>
-                </table>
+                <button class="scroll-down-btn" id="scroll-down-task" title="Scroll down">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                </button>
               </div>
             </div>
-
-            <!-- Operations - Share -->
-            <div id="ops-share" class="subview two-column">
-              <div class="card">
-                <h2>Share to Designated Emails & Dashboards</h2>
-                <p class="muted">
-                  This simulates sending task details to the individual’s email
-                  and updating their dashboard. Select an assignment and click
-                  "Share". In a real system this would connect to your email
-                  server.
-                </p>
-                <form id="form-share" class="form-grid">
-                  <label>
-                    Assignment
-                    <select
-                      name="assignmentId"
-                      id="select-share-assignment"
-                      required
-                    >
-                      <option value="">Select assignment</option>
-                    </select>
-                  </label>
-                  <label>
-                    Message (optional)
-                    <textarea
-                      name="message"
-                      rows="3"
-                      placeholder="Additional notes to include in the notification"
-                    ></textarea>
-                  </label>
-                  <button type="submit" class="btn-primary">Share</button>
-                </form>
-              </div>
-              <div class="card">
-                <h3>Share History</h3>
-                <ul class="activity-list" id="share-log"></ul>
-              </div>
-            </div>
-
-            <!-- Operations - Admin / Project Dashboard -->
-            <div id="ops-admin-dash" class="subview two-column">
-              <div class="card">
-                <h2>Admin & Project Dashboard</h2>
-                <div class="cards-grid compact">
-                  <div class="kpi-card card">
-                    <h3>Projects</h3>
-                    <p class="kpi-value" id="admin-total-projects">0</p>
-                  </div>
-                  <div class="kpi-card card">
-                    <h3>Tasks</h3>
-                    <p class="kpi-value" id="admin-total-tasks">0</p>
-                  </div>
-                  <div class="kpi-card card">
-                    <h3>Completed</h3>
-                    <p class="kpi-value" id="admin-completed-tasks">0</p>
-                  </div>
-                  <div class="kpi-card card">
-                    <h3>On‑time %</h3>
-                    <p class="kpi-value" id="admin-on-time">0%</p>
-                  </div>
-                </div>
-                <h3 style="margin-top: 1.5rem">Project Breakdown</h3>
-                <table class="table" id="table-admin-projects">
-                  <thead>
-                    <tr>
-                      <th>Project</th>
-                      <th>Department</th>
-                      <th>Tasks</th>
-                      <th>Completed</th>
-                      <th>On‑time %</th>
-                    </tr>
-                  </thead>
-                  <tbody></tbody>
-                </table>
-              </div>
-              <div class="card">
-                <h3>Timeline (sample)</h3>
-                <p class="muted">
-                  A simple textual "chart" showing how many tasks are due by
-                  week. This can be replaced with a real charting library
-                  later.
-                </p>
-                <ul class="activity-list" id="admin-timeline"></ul>
-              </div>
-            </div>
-
-            <!-- Operations - Individual Dashboard -->
-            <div id="ops-individual-dash" class="subview two-column">
-              <div class="card">
-                <h2>Individual Dashboard</h2>
-                <form class="form-grid" id="form-individual-filter">
-                  <label>
-                    Individual
-                    <select
-                      name="resourceId"
-                      id="select-individual-resource"
-                      required
-                    >
-                      <option value="">Select individual</option>
-                    </select>
-                  </label>
-                  <button type="submit" class="btn-secondary">
-                    View Performance
-                  </button>
-                </form>
-                <div class="cards-grid compact">
-                  <div class="kpi-card card">
-                    <h3>Assigned</h3>
-                    <p
-                      class="kpi-value"
-                      id="individual-total-assigned"
-                    >
-                      0
-                    </p>
-                  </div>
-                  <div class="kpi-card card">
-                    <h3>Completed</h3>
-                    <p
-                      class="kpi-value"
-                      id="individual-total-completed"
-                    >
-                      0
-                    </p>
-                  </div>
-                  <div class="kpi-card card">
-                    <h3>On‑time %</h3>
-                    <p class="kpi-value" id="individual-on-time">0%</p>
-                  </div>
-                </div>
-                <h3 style="margin-top: 1.5rem">
-                  Project & Task Performance
-                </h3>
-                <table class="table" id="table-individual-tasks">
-                  <thead>
-                    <tr>
-                      <th>Project</th>
-                      <th>Task</th>
-                      <th>Due</th>
-                      <th>Status</th>
-                      <th>Mark Complete</th>
-                    </tr>
-                  </thead>
-                  <tbody></tbody>
-                </table>
-              </div>
-              <div class="card">
-                <h3>Performance Summary</h3>
-                <ul class="activity-list" id="individual-summary"></ul>
-              </div>
-            </div>
-          </section>
-
-          <!-- HR -->
-          <section id="view-hr" class="view">
-            <div class="card">
-              <h2>Human Resources</h2>
-              <p class="muted">
-                Snapshot based on live resources and tasks. Numbers update as
-                you add team members and assignments.
-              </p>
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>Metric</th>
-                    <th>Value</th>
-                  </tr>
-                </thead>
-                <tbody id="hr-body"></tbody>
-              </table>
-            </div>
-          </section>
-
-          <!-- Client Service -->
-          <section id="view-service" class="view">
-            <div class="card">
-              <h2>Client Service</h2>
-              <p class="muted">
-                View of workload for Client Service based on current projects,
-                tasks, and assignments in Operations.
-              </p>
-              <table class="table">
+            <div class="card" style="margin-top: 1.5rem;">
+              <h3>All Tasks</h3>
+              <table class="table" id="table-tasks">
                 <thead>
                   <tr>
                     <th>Project</th>
-                    <th>Total Tasks</th>
-                    <th>Open</th>
-                    <th>Completed</th>
+                    <th>Task</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Est. Hours</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
-                <tbody id="service-body"></tbody>
+                <tbody></tbody>
               </table>
             </div>
-          </section>
+          </div>
+
+          <!-- Operations - Assign Tasks -->
+          <div id="ops-assign" class="subview two-column">
+            <div class="card">
+              <h2>Assign Tasks to Individuals</h2>
+              <form id="form-assignment" class="form-grid">
+                <label>
+                  Project
+                  <select name="projectId" id="select-assign-project" required>
+                    <option value="">Select project</option>
+                  </select>
+                </label>
+                <label>
+                  Task
+                  <select name="taskId" id="select-assign-task" required>
+                    <option value="">Select task</option>
+                  </select>
+                </label>
+                <label>
+                  Resource
+                  <select name="resourceId" id="select-assign-resource" required>
+                    <option value="">Select individual</option>
+                  </select>
+                </label>
+                <label>
+                  Due Date
+                  <input type="date" name="dueDate" required />
+                </label>
+                <button type="submit" class="btn-primary">
+                  Assign Task
+                </button>
+              </form>
+            </div>
+            <div class="card">
+              <h3>Assignments</h3>
+              <table class="table" id="table-assignments">
+                <thead>
+                  <tr>
+                    <th>Project</th>
+                    <th>Task</th>
+                    <th>Individual</th>
+                    <th>Due</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Operations - Share -->
+          <div id="ops-share" class="subview two-column">
+            <div class="card">
+              <h2>Share to Designated Emails & Dashboards</h2>
+              <p class="muted">
+                This simulates sending task details to the individual’s email
+                and updating their dashboard. Select an assignment and click
+                "Share". In a real system this would connect to your email
+                server.
+              </p>
+              <form id="form-share" class="form-grid">
+                <label>
+                  Assignment
+                  <select name="assignmentId" id="select-share-assignment" required>
+                    <option value="">Select assignment</option>
+                  </select>
+                </label>
+                <label>
+                  Message (optional)
+                  <textarea name="message" rows="3"
+                    placeholder="Additional notes to include in the notification"></textarea>
+                </label>
+                <button type="submit" class="btn-primary">Share</button>
+              </form>
+            </div>
+            <div class="card">
+              <h3>Share History</h3>
+              <ul class="activity-list" id="share-log"></ul>
+            </div>
+          </div>
+
+          <!-- Operations - Admin / Project Dashboard -->
+          <div id="ops-admin-dash" class="subview two-column">
+            <div class="card">
+              <h2>Admin & Project Dashboard</h2>
+              <div class="cards-grid compact">
+                <div class="kpi-card card">
+                  <h3>Projects</h3>
+                  <p class="kpi-value" id="admin-total-projects">0</p>
+                </div>
+                <div class="kpi-card card">
+                  <h3>Tasks</h3>
+                  <p class="kpi-value" id="admin-total-tasks">0</p>
+                </div>
+                <div class="kpi-card card">
+                  <h3>Completed</h3>
+                  <p class="kpi-value" id="admin-completed-tasks">0</p>
+                </div>
+                <div class="kpi-card card">
+                  <h3>On‑time %</h3>
+                  <p class="kpi-value" id="admin-on-time">0%</p>
+                </div>
+              </div>
+              <h3 style="margin-top: 1.5rem">Project Breakdown</h3>
+              <table class="table" id="table-admin-projects">
+                <thead>
+                  <tr>
+                    <th>Project</th>
+                    <th>Department</th>
+                    <th>Tasks</th>
+                    <th>Completed</th>
+                    <th>On‑time %</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <div class="card">
+              <h3>Timeline (sample)</h3>
+              <p class="muted">
+                A simple textual "chart" showing how many tasks are due by
+                week. This can be replaced with a real charting library
+                later.
+              </p>
+              <ul class="activity-list" id="admin-timeline"></ul>
+            </div>
+          </div>
+
+          <!-- Operations - Individual Dashboard -->
+          <div id="ops-individual-dash" class="subview two-column">
+            <div class="card">
+              <h2>Individual Dashboard</h2>
+              <form class="form-grid" id="form-individual-filter">
+                <label>
+                  Individual
+                  <select name="resourceId" id="select-individual-resource" required>
+                    <option value="">Select individual</option>
+                  </select>
+                </label>
+                <button type="submit" class="btn-secondary">
+                  View Performance
+                </button>
+              </form>
+              <div class="cards-grid compact">
+                <div class="kpi-card card">
+                  <h3>Assigned</h3>
+                  <p class="kpi-value" id="individual-total-assigned">
+                    0
+                  </p>
+                </div>
+                <div class="kpi-card card">
+                  <h3>Completed</h3>
+                  <p class="kpi-value" id="individual-total-completed">
+                    0
+                  </p>
+                </div>
+                <div class="kpi-card card">
+                  <h3>On‑time %</h3>
+                  <p class="kpi-value" id="individual-on-time">0%</p>
+                </div>
+              </div>
+              <h3 style="margin-top: 1.5rem">
+                Project & Task Performance
+              </h3>
+              <table class="table" id="table-individual-tasks">
+                <thead>
+                  <tr>
+                    <th>Project</th>
+                    <th>Task</th>
+                    <th>Due</th>
+                    <th>Status</th>
+                    <th>Mark Complete</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <div class="card">
+              <h3>Performance Summary</h3>
+              <ul class="activity-list" id="individual-summary"></ul>
+            </div>
+          </div>
         </section>
-      </main>
-    </div>
 
-    <script src="app.js"></script>
-  </body>
+        <!-- HR -->
+        <section id="view-hr" class="view">
+          <div class="card">
+            <h2>Human Resources</h2>
+            <p class="muted">
+              Snapshot based on live resources and tasks. Numbers update as
+              you add team members and assignments.
+            </p>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody id="hr-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Client Service -->
+        <section id="view-service" class="view">
+          <div class="card">
+            <h2>Client Service</h2>
+            <p class="muted">
+              View of workload for Client Service based on current projects,
+              tasks, and assignments in Operations.
+            </p>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Project</th>
+                  <th>Total Tasks</th>
+                  <th>Open</th>
+                  <th>Completed</th>
+                </tr>
+              </thead>
+              <tbody id="service-body"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
 </html>
-
-

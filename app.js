@@ -1,4 +1,5 @@
 
+
 // Simple in-memory data model
 const state = {
   resources: [],
@@ -9,14 +10,76 @@ const state = {
   activity: [],
   customers: [],
   estimates: [],
+  salesOrders: [],
+  deliveryChallans: [],
+  invoices: [],
+  payments: [],
+  recurringInvoices: [],
+  creditNotes: [],
 };
 
 let idCounter = 1;
 const nextId = () => String(idCounter++);
 
+// LocalStorage persistence
+const STORAGE_KEY = 'crmm_app_data';
+
+function saveToLocalStorage() {
+  try {
+    const dataToSave = {
+      state: state,
+      idCounter: idCounter,
+      timestamp: new Date().toISOString()
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+    console.log('Data saved to localStorage');
+  } catch (error) {
+    console.error('Error saving to localStorage:', error);
+  }
+}
+
+function loadFromLocalStorage() {
+  try {
+    const savedData = localStorage.getItem(STORAGE_KEY);
+    if (savedData) {
+      const parsed = JSON.parse(savedData);
+
+      // Restore state
+      if (parsed.state) {
+        state.resources = parsed.state.resources || [];
+        state.projects = parsed.state.projects || [];
+        state.tasks = parsed.state.tasks || [];
+        state.assignments = parsed.state.assignments || [];
+        state.shares = parsed.state.shares || [];
+        state.activity = parsed.state.activity || [];
+        state.customers = parsed.state.customers || [];
+        state.estimates = parsed.state.estimates || [];
+        state.salesOrders = parsed.state.salesOrders || [];
+        state.deliveryChallans = parsed.state.deliveryChallans || [];
+        state.invoices = parsed.state.invoices || [];
+        state.payments = parsed.state.payments || [];
+        state.recurringInvoices = parsed.state.recurringInvoices || [];
+        state.creditNotes = parsed.state.creditNotes || [];
+      }
+
+      // Restore idCounter
+      if (parsed.idCounter) {
+        idCounter = parsed.idCounter;
+      }
+
+      console.log('Data loaded from localStorage');
+      return true;
+    }
+  } catch (error) {
+    console.error('Error loading from localStorage:', error);
+  }
+  return false;
+}
+
 // Chart instances
 let statusChart;
 let departmentChart;
+
 
 // Utils
 function addActivity(message, meta) {
@@ -28,6 +91,7 @@ function addActivity(message, meta) {
   };
   state.activity.unshift(entry);
   renderActivity();
+  saveToLocalStorage();
 }
 
 // Video Template Task Definitions
@@ -40,13 +104,13 @@ function getVideoTemplateTasks() {
     { phase: "Pre-Production", title: "Project Schedule", order: 4, estimate: 4, description: "Develop comprehensive timeline with deadlines for all phases." },
     { phase: "Pre-Production", title: "Script", order: 5, estimate: 12, description: "Write and finalize video script with dialogue, narration, and scene descriptions." },
     { phase: "Pre-Production", title: "Storyboard", order: 6, estimate: 16, description: "Create visual storyboard showing key scenes, shots, and transitions." },
-    
+
     // Production Phase
     { phase: "Production", title: "Voiceover", order: 7, estimate: 8, description: "Record professional voiceover narration for the video." },
     { phase: "Production", title: "Editing", order: 8, estimate: 24, description: "Edit video footage, add transitions, effects, and synchronize audio." },
     { phase: "Production", title: "Text Synchronization", order: 9, estimate: 6, description: "Sync on-screen text, captions, and graphics with video timeline." },
     { phase: "Production", title: "Output", order: 10, estimate: 4, description: "Generate initial video output for review." },
-    
+
     // Post-Production Phase
     { phase: "Post-Production", title: "Final Video", order: 11, estimate: 8, description: "Create final video version with all refinements." },
     { phase: "Post-Production", title: "Output", order: 12, estimate: 4, description: "Export final video in required format." },
@@ -62,68 +126,68 @@ function getVideoTemplateTasks() {
 function createTasksFromTemplate(projectId, templateName, startDate, endDate) {
   console.log("=== createTasksFromTemplate CALLED ===");
   console.log("Parameters:", { projectId, templateName, startDate, endDate });
-  
+
   if (templateName !== "video") {
     console.log("Template name doesn't match 'video':", templateName);
     return 0;
   }
-  
+
   if (!startDate || !endDate) {
     console.error("Missing dates for template creation:", { startDate, endDate });
     return 0;
   }
-  
+
   const templateTasks = getVideoTemplateTasks();
   console.log("Template tasks loaded:", templateTasks.length);
-  
+
   // Parse dates - handle both YYYY-MM-DD format and Date objects
   const start = startDate instanceof Date ? startDate : new Date(startDate + "T00:00:00");
   const end = endDate instanceof Date ? endDate : new Date(endDate + "T23:59:59");
-  
+
   // Validate dates
   if (isNaN(start.getTime()) || isNaN(end.getTime())) {
     console.error("Invalid dates:", startDate, endDate);
     return 0;
   }
-  
+
   const totalDays = Math.max(1, Math.ceil((end - start) / (1000 * 60 * 60 * 24)));
-  
+
   // Phase distribution: Pre-Production (35%), Production (40%), Post-Production (25%)
   const phaseDistribution = {
     "Pre-Production": { startPercent: 0, endPercent: 0.35, taskCount: 6 },
     "Production": { startPercent: 0.35, endPercent: 0.75, taskCount: 4 },
     "Post-Production": { startPercent: 0.75, endPercent: 1.0, taskCount: 7 }
   };
-  
+
   templateTasks.forEach((templateTask) => {
     const phaseInfo = phaseDistribution[templateTask.phase];
     const phaseStartDays = Math.floor(totalDays * phaseInfo.startPercent);
     const phaseEndDays = Math.floor(totalDays * phaseInfo.endPercent);
     const phaseDuration = phaseEndDays - phaseStartDays;
-    
+
     // Calculate task position within phase (0 to 1)
     // Find first task in this phase
     const phaseFirstOrder = templateTasks.find(t => t.phase === templateTask.phase)?.order || 1;
     const phaseOrder = templateTask.order - phaseFirstOrder;
     const taskPositionInPhase = phaseInfo.taskCount > 1 ? phaseOrder / (phaseInfo.taskCount - 1) : 0;
-    
+
     // Calculate task dates
     const daysFromStart = phaseStartDays + Math.floor(phaseDuration * taskPositionInPhase);
     const taskStartDate = new Date(start);
     taskStartDate.setDate(start.getDate() + daysFromStart);
-    
+
     // Task duration based on estimate (1 hour estimate = 0.5 days, minimum 1 day)
     const taskDuration = Math.max(1, Math.ceil((templateTask.estimate || 8) / 16));
     const taskDueDate = new Date(taskStartDate);
     taskDueDate.setDate(taskStartDate.getDate() + taskDuration);
-    
+
     // Ensure dates don't exceed project boundaries
     if (taskStartDate < start) taskStartDate.setTime(start.getTime());
     if (taskDueDate > end) taskDueDate.setTime(end.getTime());
     if (taskStartDate >= taskDueDate) {
       taskDueDate.setTime(taskStartDate.getTime() + (24 * 60 * 60 * 1000)); // Add 1 day minimum
     }
-    
+
     const task = {
       id: nextId(),
       projectId: projectId,
@@ -139,21 +203,21 @@ function createTasksFromTemplate(projectId, templateName, startDate, endDate) {
       phase: templateTask.phase,
       order: templateTask.order,
     };
-    
+
     state.tasks.push(task);
     console.log(`Task ${templateTask.order} created: ${templateTask.title} (ID: ${task.id})`);
   });
-  
+
   console.log("=== ALL TASKS CREATED ===");
   console.log("Total tasks created:", templateTasks.length);
   console.log("Total tasks in state:", state.tasks.length);
-  
+
   // Refresh all views
   renderTasks();
   renderDepartmentStats();
   renderAdminDashboard();
   addActivity(`Created ${templateTasks.length} tasks from Video template`, "Template");
-  
+
   return templateTasks.length;
 }
 
@@ -293,7 +357,7 @@ function renderProjects() {
   tbody.innerHTML = "";
   selectTaskProject.innerHTML = '<option value="">Select project</option>';
   selectAssignProject.innerHTML = '<option value="">Select project</option>';
-  
+
   // Populate owner dropdown
   if (selectProjectOwner) {
     selectProjectOwner.innerHTML = '<option value="">Select owner</option>';
@@ -308,7 +372,7 @@ function renderProjects() {
   state.projects.forEach((p) => {
     const tr = document.createElement("tr");
     const duration = `${formatDate(p.startDate)} → ${formatDate(p.endDate)}`;
-    const priorityBadge = p.priority && p.priority !== "none" 
+    const priorityBadge = p.priority && p.priority !== "none"
       ? `<span class="status-pill status-pill--${p.priority}">${p.priority.toUpperCase()}</span>`
       : "-";
     tr.innerHTML = `
@@ -354,7 +418,7 @@ function renderTasks() {
 
   tbody.innerHTML = "";
   selectAssignTask.innerHTML = '<option value="">Select task</option>';
-  
+
   // Populate task owner dropdown
   if (selectTaskOwner) {
     selectTaskOwner.innerHTML = '<option value="">Select owner</option>';
@@ -417,9 +481,8 @@ function renderAssignments() {
       <td>${task ? task.title : "-"}</td>
       <td>${resource ? resource.name : "-"}</td>
       <td>${formatDate(a.dueDate)}</td>
-      <td><span class="status-pill ${statusClass}">${
-      a.status === "completed" ? "Completed" : "In Progress"
-    }</span></td>
+      <td><span class="status-pill ${statusClass}">${a.status === "completed" ? "Completed" : "In Progress"
+      }</span></td>
       <td>
         <button class="table-button" data-view-assignment="${a.id}">View</button>
         <button class="table-button table-button--danger" data-delete-assignment="${a.id}">Delete</button>
@@ -429,9 +492,8 @@ function renderAssignments() {
 
     const opt = document.createElement("option");
     opt.value = a.id;
-    opt.textContent = `${resource ? resource.name : "Unknown"} - ${
-      task ? task.title : "Task"
-    }`;
+    opt.textContent = `${resource ? resource.name : "Unknown"} - ${task ? task.title : "Task"
+      }`;
     selectShareAssignment.appendChild(opt);
   });
 }
@@ -452,9 +514,8 @@ function renderShares() {
           <strong>${resource ? resource.name : "resource"}</strong>
         </div>
         <div class="activity-meta">
-          ${formatDate(s.sharedAt)} · ${
-        resource ? resource.email : "no-email"
-      }
+          ${formatDate(s.sharedAt)} · ${resource ? resource.email : "no-email"
+        }
         </div>
       `;
       list.appendChild(li);
@@ -887,18 +948,16 @@ function renderIndividualDashboard(resourceId) {
       <td>${task ? task.title : "-"}</td>
       <td>${formatDate(a.dueDate)}</td>
       <td>
-        <span class="status-pill ${
-          isCompleted ? "status-pill--completed" : "status-pill--inprogress"
-        }">
+        <span class="status-pill ${isCompleted ? "status-pill--completed" : "status-pill--inprogress"
+      }">
           ${isCompleted ? "Completed" : "In Progress"}
         </span>
       </td>
       <td>
-        ${
-          isCompleted
-            ? "-"
-            : `<button class="table-button" data-complete="${a.id}">Mark Complete</button>`
-        }
+        ${isCompleted
+        ? "-"
+        : `<button class="table-button" data-complete="${a.id}">Mark Complete</button>`
+      }
       </td>
     `;
     tbody.appendChild(tr);
@@ -942,6 +1001,7 @@ function setupForms() {
       email: data.get("email").trim(),
     };
     state.resources.push(resource);
+    saveToLocalStorage();
     renderResources();
     renderDepartmentStats();
     addActivity(`Added resource ${resource.name}`, resource.department);
@@ -971,21 +1031,22 @@ function setupForms() {
       rollup: data.get("rollup") === "on",
     };
     state.projects.push(project);
+    saveToLocalStorage();
     renderProjects();
     renderDepartmentStats();
     addActivity(`Created project ${project.name}`, project.department);
-    
+
     // Create tasks from template if template is selected
     console.log("Project created:", project);
     console.log("Template value:", project.template);
-    
+
     if (project.template === "video") {
       console.log("Video template detected! Creating tasks...");
       const taskCount = createTasksFromTemplate(project.id, project.template, project.startDate, project.endDate);
       console.log("Tasks created:", taskCount);
       console.log("Total tasks in state:", state.tasks.length);
       console.log("Tasks for this project:", state.tasks.filter(t => t.projectId === project.id).length);
-      
+
       if (taskCount > 0) {
         alert(`Project "${project.name}" created successfully!\n\n✅ ${taskCount} tasks created from Video template.\n\n📋 Go to the "Tasks" tab to view all tasks.`);
       } else {
@@ -995,7 +1056,7 @@ function setupForms() {
       console.log("No template selected or template is:", project.template);
       alert("Project created successfully!");
     }
-    
+
     projectForm.reset();
   });
 
@@ -1019,10 +1080,11 @@ function setupForms() {
     };
     if (!task.projectId) return;
     state.tasks.push(task);
+    saveToLocalStorage();
     renderTasks();
     renderDepartmentStats();
     addActivity(`Added task ${task.title}`, "Task creation");
-    
+
     // Show notification message
     if (notifyUsers.length > 0) {
       const notifyLabels = {
@@ -1036,7 +1098,7 @@ function setupForms() {
     } else {
       alert("Task created successfully!");
     }
-    
+
     taskForm.reset();
   });
 
@@ -1082,6 +1144,7 @@ function setupForms() {
     if (!assignment.projectId || !assignment.taskId || !assignment.resourceId)
       return;
     state.assignments.push(assignment);
+    saveToLocalStorage();
     renderAssignments();
     renderGlobalKPIs();
     renderDepartmentStats();
@@ -1110,11 +1173,11 @@ function setupForms() {
       sharedAt: new Date().toISOString(),
     };
     state.shares.push(share);
+    saveToLocalStorage();
     renderShares();
 
     addActivity(
-      `Shared task ${task ? task.title : ""} to ${
-        resource ? resource.email : ""
+      `Shared task ${task ? task.title : ""} to ${resource ? resource.email : ""
       }`,
       "Email & dashboard share"
     );
@@ -1161,6 +1224,7 @@ function setupForms() {
       if (!assignment) return;
       assignment.status = "completed";
       assignment.completedAt = new Date().toISOString();
+      saveToLocalStorage();
       renderAssignments();
       renderGlobalKPIs();
       renderAdminDashboard();
@@ -1200,6 +1264,7 @@ function setupForms() {
           (a) => a.resourceId !== id
         );
         state.shares = state.shares.filter((s) => s.resourceId !== id);
+        saveToLocalStorage();
         renderResources();
         renderAssignments();
         renderShares();
@@ -1255,6 +1320,7 @@ function setupForms() {
       state.shares = state.shares.filter(
         (s) => !taskIds.includes(s.taskId)
       );
+      saveToLocalStorage();
       renderProjects();
       renderTasks();
       renderAssignments();
@@ -1309,6 +1375,7 @@ function setupForms() {
         (a) => a.taskId !== id
       );
       state.shares = state.shares.filter((s) => s.taskId !== id);
+      saveToLocalStorage();
       renderTasks();
       renderAssignments();
       renderShares();
@@ -1331,10 +1398,8 @@ function setupForms() {
         const task = state.tasks.find((t) => t.id === a.taskId);
         const resource = state.resources.find((r) => r.id === a.resourceId);
         alert(
-          `Assignment details:\n\nProject: ${
-            project ? project.name : "-"
-          }\nTask: ${task ? task.title : "-"}\nIndividual: ${
-            resource ? resource.name : "-"
+          `Assignment details:\n\nProject: ${project ? project.name : "-"
+          }\nTask: ${task ? task.title : "-"}\nIndividual: ${resource ? resource.name : "-"
           }\nDue: ${formatDate(a.dueDate)}\nStatus: ${a.status}`
         );
       } else if (target.matches("button[data-delete-assignment]")) {
@@ -1346,6 +1411,7 @@ function setupForms() {
         state.shares = state.shares.filter(
           (s) => s.assignmentId !== id
         );
+        saveToLocalStorage();
         renderAssignments();
         renderShares();
         renderGlobalKPIs();
@@ -1371,6 +1437,7 @@ function setupForms() {
         credits: parseFloat(data.get("credits") || "0"),
       };
       state.customers.push(customer);
+      saveToLocalStorage();
       renderSalesCustomers();
       addActivity(`Added customer ${customer.name}`, "Sales - Customers");
       salesCustomerForm.reset();
@@ -1423,6 +1490,7 @@ function setupForms() {
       };
 
       state.estimates.push(estimate);
+      saveToLocalStorage();
       renderSalesEstimates();
       addActivity(
         `Created estimate ${estimate.estimateNumber || estimate.id}`,
@@ -1605,7 +1673,14 @@ window.addEventListener("DOMContentLoaded", () => {
   setupOperationsSubnav();
   setupSalesSubnav();
   setupForms();
-  seedSampleData();
+
+  // Load data from localStorage, or seed sample data if no saved data exists
+  const hasData = loadFromLocalStorage();
+  if (!hasData) {
+    seedSampleData();
+    saveToLocalStorage(); // Save the sample data
+  }
+
   initialRender();
 
   // Set Operations view and Projects subview as active by default
