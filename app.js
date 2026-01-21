@@ -16,6 +16,12 @@ const state = {
   payments: [],
   recurringInvoices: [],
   creditNotes: [],
+  // Accounts module
+  vendors: [],
+  expenses: [],
+  bills: [],
+  purchaseOrders: [],
+  accountsDocuments: [],
 };
 
 let idCounter = 1;
@@ -60,6 +66,12 @@ function loadFromLocalStorage() {
         state.payments = parsed.state.payments || [];
         state.recurringInvoices = parsed.state.recurringInvoices || [];
         state.creditNotes = parsed.state.creditNotes || [];
+        // Accounts module
+        state.vendors = parsed.state.vendors || [];
+        state.expenses = parsed.state.expenses || [];
+        state.bills = parsed.state.bills || [];
+        state.purchaseOrders = parsed.state.purchaseOrders || [];
+        state.accountsDocuments = parsed.state.accountsDocuments || [];
       }
 
       // Restore idCounter
@@ -1031,6 +1043,179 @@ function renderCreditNotes() {
   });
 }
 
+// Accounts - Vendors
+function renderAccountsVendors() {
+  const table = document.querySelector("#table-accounts-vendors tbody");
+  const selectExpenseVendor = document.getElementById("select-expense-vendor");
+  const selectBillVendor = document.getElementById("select-bill-vendor");
+  const selectPOVendor = document.getElementById("select-po-vendor");
+
+  if (!table) return;
+
+  table.innerHTML = "";
+
+  // Reset all dropdowns
+  if (selectExpenseVendor) {
+    selectExpenseVendor.innerHTML = '<option value="">Select vendor</option>';
+  }
+  if (selectBillVendor) {
+    selectBillVendor.innerHTML = '<option value="">Select vendor</option>';
+  }
+  if (selectPOVendor) {
+    selectPOVendor.innerHTML = '<option value="">Select vendor</option>';
+  }
+
+  state.vendors.forEach((v) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${v.name}</td>
+      <td>${v.company || "-"}</td>
+      <td>${v.email || "-"}</td>
+      <td>${v.phone || "-"}</td>
+      <td>${v.paymentTerms || "-"}</td>
+      <td>₹${(v.totalPayable || 0).toFixed(2)}</td>
+    `;
+    table.appendChild(tr);
+
+    // Populate all vendor dropdowns
+    if (selectExpenseVendor) {
+      const opt = document.createElement("option");
+      opt.value = v.id;
+      opt.textContent = v.name;
+      selectExpenseVendor.appendChild(opt);
+    }
+    if (selectBillVendor) {
+      const opt = document.createElement("option");
+      opt.value = v.id;
+      opt.textContent = v.name;
+      selectBillVendor.appendChild(opt);
+    }
+    if (selectPOVendor) {
+      const opt = document.createElement("option");
+      opt.value = v.id;
+      opt.textContent = v.name;
+      selectPOVendor.appendChild(opt);
+    }
+  });
+}
+
+// Accounts - Expenses
+function renderAccountsExpenses() {
+  const table = document.querySelector("#table-accounts-expenses tbody");
+  if (!table) return;
+
+  table.innerHTML = "";
+  let totalExpenses = 0;
+
+  state.expenses.forEach((e) => {
+    const vendor = state.vendors.find((v) => v.id === e.vendorId);
+    const amount = e.amount || 0;
+    totalExpenses += amount;
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${formatDate(e.expenseDate)}</td>
+      <td>${vendor ? vendor.name : "-"}</td>
+      <td>${e.category || "-"}</td>
+      <td>${e.paymentMethod || "-"}</td>
+      <td>₹${amount.toFixed(2)}</td>
+      <td>${e.reference || "-"}</td>
+    `;
+    table.appendChild(tr);
+  });
+
+  // Update total if element exists
+  const totalElement = document.getElementById("total-expenses");
+  if (totalElement) {
+    totalElement.textContent = `₹${totalExpenses.toFixed(2)}`;
+  }
+}
+
+// Accounts - Bills
+function renderAccountsBills() {
+  const table = document.querySelector("#table-accounts-bills tbody");
+  if (!table) return;
+
+  table.innerHTML = "";
+  state.bills.forEach((bill) => {
+    const vendor = state.vendors.find((v) => v.id === bill.vendorId);
+    const statusLabel = bill.status || "Unpaid";
+    const amount = bill.amount || 0;
+
+    // Determine status pill color
+    let statusClass = "status-pill--pending";
+    if (statusLabel === "Paid") statusClass = "status-pill--completed";
+    else if (statusLabel === "Overdue") statusClass = "status-pill--high";
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${formatDate(bill.billDate)}</td>
+      <td>${bill.billNumber || "-"}</td>
+      <td>${vendor ? vendor.name : "-"}</td>
+      <td>${formatDate(bill.dueDate)}</td>
+      <td><span class="status-pill ${statusClass}">${statusLabel}</span></td>
+      <td>₹${amount.toFixed(2)}</td>
+    `;
+    table.appendChild(tr);
+  });
+}
+
+// Accounts - Purchase Orders
+function renderAccountsPurchaseOrders() {
+  const table = document.querySelector("#table-accounts-purchase-orders tbody");
+  if (!table) return;
+
+  table.innerHTML = "";
+  state.purchaseOrders.forEach((po) => {
+    const vendor = state.vendors.find((v) => v.id === po.vendorId);
+    const statusLabel = po.status || "Draft";
+    const amount = po.amount || 0;
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${formatDate(po.orderDate)}</td>
+      <td>${po.poNumber || "-"}</td>
+      <td>${vendor ? vendor.name : "-"}</td>
+      <td>${formatDate(po.deliveryDate)}</td>
+      <td><span class="status-pill status-pill--pending">${statusLabel}</span></td>
+      <td>₹${amount.toFixed(2)}</td>
+    `;
+    table.appendChild(tr);
+  });
+}
+
+// Accounts - Activity History
+function renderAccountsActivity() {
+  const list = document.getElementById("accounts-activity-log");
+  if (!list) return;
+
+  list.innerHTML = "";
+
+  // Get all accounts-related activities from main activity log
+  const accountsActivities = state.activity.filter(a =>
+    a.meta && (
+      a.meta.includes("Accounts") ||
+      a.meta.includes("Vendor") ||
+      a.meta.includes("Expense") ||
+      a.meta.includes("Bill") ||
+      a.meta.includes("Purchase Order")
+    )
+  );
+
+  accountsActivities.slice(0, 20).forEach((a) => {
+    const li = document.createElement("li");
+    const timestamp = a.timestamp ? new Date(a.timestamp).toLocaleString() : "-";
+    li.innerHTML = `
+      <div class="activity-main">${a.message}</div>
+      <div class="activity-meta">${timestamp} · ${a.meta}</div>
+    `;
+    list.appendChild(li);
+  });
+
+  if (accountsActivities.length === 0) {
+    list.innerHTML = '<li><div class="activity-main muted">No activity recorded yet.</div></li>';
+  }
+}
+
 function renderCharts() {
   const statusCanvas = document.getElementById("chart-status");
   const deptCanvas = document.getElementById("chart-departments");
@@ -1913,6 +2098,151 @@ function setupForms() {
       alert("Credit Note created successfully!");
     });
   }
+
+  // Accounts subnav navigation
+  const accountsSubnav = document.querySelector(".accounts-subnav");
+  if (accountsSubnav) {
+    const buttons = accountsSubnav.querySelectorAll(".subnav-item");
+    const views = document.querySelectorAll(".accounts-subview");
+
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const target = btn.dataset.accountsSubview;
+
+        buttons.forEach((b) => b.classList.remove("subnav-active"));
+        btn.classList.add("subnav-active");
+
+        views.forEach((v) => v.classList.remove("accounts-subview-active"));
+        const viewEl = document.getElementById(target);
+        if (viewEl) viewEl.classList.add("accounts-subview-active");
+      });
+    });
+  }
+
+  // Accounts - Vendors
+  const vendorForm = document.getElementById("form-accounts-vendor");
+  if (vendorForm) {
+    vendorForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const data = new FormData(vendorForm);
+      const vendor = {
+        id: nextId(),
+        name: data.get("name").trim(),
+        company: data.get("company")?.trim() || "",
+        email: data.get("email")?.trim() || "",
+        phone: data.get("phone")?.trim() || "",
+        paymentTerms: data.get("paymentTerms") || "Net 30",
+        taxId: data.get("taxId")?.trim() || "",
+        address: data.get("address")?.trim() || "",
+        totalPayable: 0,
+      };
+      state.vendors.push(vendor);
+      saveToLocalStorage();
+      renderAccountsVendors();
+      addActivity(`Added vendor ${vendor.company || vendor.name}`, "Accounts - Vendors");
+      vendorForm.reset();
+      alert("Vendor created successfully!");
+    });
+  }
+
+  // Accounts - Expenses
+  const expenseForm = document.getElementById("form-accounts-expense");
+  if (expenseForm) {
+    expenseForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const data = new FormData(expenseForm);
+      const expense = {
+        id: nextId(),
+        expenseDate: data.get("expenseDate"),
+        vendorId: data.get("vendorId") || "",
+        category: data.get("category") || "",
+        amount: parseFloat(data.get("amount") || "0"),
+        paymentMethod: data.get("paymentMethod") || "Cash",
+        reference: data.get("reference")?.trim() || "",
+        notes: data.get("notes   ")?.trim() || "",
+      };
+      state.expenses.push(expense);
+      saveToLocalStorage();
+      renderAccountsExpenses();
+      const vendor = state.vendors.find(v => v.id === expense.vendorId);
+      addActivity(
+        `Recorded expense: ${expense.category} - ₹${expense.amount.toFixed(2)}`,
+        "Accounts - Expenses"
+      );
+      expenseForm.reset();
+      alert("Expense recorded successfully!");
+    });
+  }
+
+  // Accounts - Bills
+  const billForm = document.getElementById("form-accounts-bill");
+  if (billForm) {
+    billForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const data = new FormData(billForm);
+      const vendorId = data.get("vendorId");
+      if (!vendorId) return;
+
+      const bill = {
+        id: nextId(),
+        vendorId,
+        billNumber: data.get("billNumber")?.trim() || "",
+        billDate: data.get("billDate"),
+        dueDate: data.get("dueDate"),
+        amount: parseFloat(data.get("amount") || "0"),
+        status: data.get("status") || "Unpaid",
+        notes: data.get("notes")?.trim() || "",
+      };
+      state.bills.push(bill);
+
+      // Update vendor's total payable
+      const vendor = state.vendors.find(v => v.id === vendorId);
+      if (vendor && bill.status !== "Paid") {
+        vendor.totalPayable = (vendor.totalPayable || 0) + bill.amount;
+      }
+
+      saveToLocalStorage();
+      renderAccountsBills();
+      renderAccountsVendors();
+      addActivity(
+        `Created bill ${bill.billNumber || bill.id} - ₹${bill.amount.toFixed(2)}`,
+        "Accounts - Bills"
+      );
+      billForm.reset();
+      alert("Bill created successfully!");
+    });
+  }
+
+  // Accounts - Purchase Orders
+  const poForm = document.getElementById("form-accounts-purchase-order");
+  if (poForm) {
+    poForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const data = new FormData(poForm);
+      const vendorId = data.get("vendorId");
+      if (!vendorId) return;
+
+      const po = {
+        id: nextId(),
+        vendorId,
+        poNumber: data.get("poNumber")?.trim() || "",
+        orderDate: data.get("orderDate"),
+        deliveryDate: data.get("deliveryDate") || "",
+        amount: parseFloat(data.get("amount") || "0"),
+        status: data.get("status") || "Draft",
+        notes: data.get("notes")?.trim() || "",
+      };
+      state.purchaseOrders.push(po);
+      saveToLocalStorage();
+      renderAccountsPurchaseOrders();
+      addActivity(
+        `Created purchase order ${po.poNumber || po.id} - ₹${po.amount.toFixed(2)}`,
+        "Accounts - Purchase Orders"
+      );
+      poForm.reset();
+      alert("Purchase Order created successfully!");
+    });
+  }
 }
 
 function seedSampleData() {
@@ -2055,6 +2385,60 @@ function seedSampleData() {
   };
   state.shares.push(share);
 
+  // Accounts Module Sample Data
+  // Vendors
+  const vendor1 = { id: nextId(), name: "Sarah Miller", company: "Office Supplies Inc", email: "sales@officesuppliesinc.com", phone: "+1-555-0101", paymentTerms: "Net 30", taxId: "TAX12345678", address: "123 Business Park, Mumbai", totalPayable: 0 };
+  const vendor2 = { id: nextId(), name: "Michael Chen", company: "Tech Solutions Ltd", email: "billing@techsolutions.com", phone: "+1-555-0102", paymentTerms: "Net 15", taxId: "TAX87654321", address: "456 Tech Plaza, Bangalore", totalPayable: 0 };
+  const vendor3 = { id: nextId(), name: "Priya Sharma", company: "Cloud Services Pro", email: "accounts@cloudservices.pro", phone: "+1-555-0103", paymentTerms: "Net 30", taxId: "TAX11223344", address: "789 Cloud Tower, Hyderabad", totalPayable: 0 };
+  const vendor4 = { id: nextId(), name: "David Wilson", company: "Marketing Masters", email: "invoices@marketingmasters.com", phone: "+1-555-0104", paymentTerms: "Net 45", taxId: "TAX44332211", address: "321 Creative Ave, Pune", totalPayable: 0 };
+  const vendor5 = { id: nextId(), name: "Amit Patel", company: "Print & Design Co", email: "billing@printdesign.co", phone: "+1-555-0105", paymentTerms: "Due on receipt", taxId: "TAX55667788", address: "654 Art District, Delhi", totalPayable: 0 };
+  const vendor6 = { id: nextId(), name: "Lisa Anderson", company: "Professional Consulting", email: "admin@profconsult.com", phone: "+1-555-0106", paymentTerms: "Net 30", taxId: "TAX99887766", address: "987 Consult Plaza, Chennai", totalPayable: 0 };
+  const vendor7 = { id: nextId(), name: "Raj Kumar", company: "QuickTransport Services", email: "accounts@quicktransport.in", phone: "+1-555-0107", paymentTerms: "Net 15", taxId: "TAX33445566", address: "147 Logistics Hub, Kolkata", totalPayable: 0 };
+  const vendor8 = { id: nextId(), name: "Emma Thompson", company: "Legal Advisory Group", email: "billing@legaladvisory.com", phone: "+1-555-0108", paymentTerms: "Net 60", taxId: "TAX77889900", address: "258 Law Towers, Mumbai", totalPayable: 0 };
+  state.vendors.push(vendor1, vendor2, vendor3, vendor4, vendor5, vendor6, vendor7, vendor8);
+
+  // Expenses (spanning last 3 months)
+  const today = new Date();
+  const exp1 = { id: nextId(), expenseDate: new Date(today.getFullYear(), today.getMonth(), 15).toISOString().slice(0, 10), vendorId: vendor1.id, category: "Office Supplies", amount: 4500.00, paymentMethod: "Credit Card", reference: "INV-OS-2024-001", notes: "Printer paper and stationery" };
+  const exp2 = { id: nextId(), expenseDate: new Date(today.getFullYear(), today.getMonth(), 10).toISOString().slice(0, 10), vendorId: vendor2.id, category: "Software & Subscriptions", amount: 12000.00, paymentMethod: "Bank Transfer", reference: "SUB-2024-Q1", notes: "Annual software licenses" };
+  const exp3 = { id: nextId(), expenseDate: new Date(today.getFullYear(), today.getMonth(), 5).toISOString().slice(0, 10), vendorId: vendor3.id, category: "Software & Subscriptions", amount: 8500.00, paymentMethod: "Credit Card", reference: "CLOUD-JAN-2024", notes: "Cloud hosting monthly fee" };
+  const exp4 = { id: nextId(), expenseDate: new Date(today.getFullYear(), today.getMonth() - 1, 28).toISOString().slice(0, 10), vendorId: vendor4.id, category: "Marketing", amount: 25000.00, paymentMethod: "Bank Transfer", reference: "CAMPAIGN-2024-001", notes: "Q1 digital marketing campaign" };
+  const exp5 = { id: nextId(), expenseDate: new Date(today.getFullYear(), today.getMonth() - 1, 20).toISOString().slice(0, 10), vendorId: vendor5.id, category: "Marketing", amount: 3200.00, paymentMethod: "UPI", reference: "PRINT-2024-002", notes: "Business cards and brochures" };
+  const exp6 = { id: nextId(), expenseDate: new Date(today.getFullYear(), today.getMonth() - 1, 12).toISOString().slice(0, 10), vendorId: vendor1.id, category: "Office Supplies", amount: 2100.00, paymentMethod: "Credit Card", reference: "INV-OS-2024-002", notes: "Office furniture accessories" };
+  const exp7 = { id: nextId(), expenseDate: new Date(today.getFullYear(), today.getMonth() - 2, 25).toISOString().slice(0, 10), vendorId: vendor6.id, category: "Professional Services", amount: 45000.00, paymentMethod: "Bank Transfer", reference: "CONSULT-2024-001", notes: "Business strategy consultation" };
+  const exp8 = { id: nextId(), expenseDate: new Date(today.getFullYear(), today.getMonth() - 2, 18).toISOString().slice(0, 10), vendorId: vendor7.id, category: "Travel", amount: 7800.00, paymentMethod: "Credit Card", reference: "TRANSPORT-2024-005", notes: "Client meeting transportation" };
+  const exp9 = { id: nextId(), expenseDate: new Date(today.getFullYear(), today.getMonth(), 22).toISOString().slice(0, 10), vendorId: vendor3.id, category: "Software & Subscriptions", amount: 8500.00, paymentMethod: "Credit Card", reference: "CLOUD-FEB-2024", notes: "Cloud hosting monthly fee" };
+  const exp10 = { id: nextId(), expenseDate: new Date(today.getFullYear(), today.getMonth() - 1, 8).toISOString().slice(0, 10), vendorId: "", category: "Utilities", amount: 3500.00, paymentMethod: "Bank Transfer", reference: "ELECT-JAN-2024", notes: "Office electricity bill" };
+  const exp11 = { id: nextId(), expenseDate: new Date(today.getFullYear(), today.getMonth() - 2, 15).toISOString().slice(0, 10), vendorId: "", category: "Utilities", amount: 3200.00, paymentMethod: "Bank Transfer", reference: "ELECT-DEC-2023", notes: "Office electricity bill" };
+  const exp12 = { id: nextId(), expenseDate: new Date(today.getFullYear(), today.getMonth(), 3).toISOString().slice(0, 10), vendorId: vendor8.id, category: "Professional Services", amount: 18000.00, paymentMethod: "Bank Transfer", reference: "LEGAL-2024-001", notes: "Legal compliance review" };
+  const exp13 = { id: nextId(), expenseDate: new Date(today.getFullYear(), today.getMonth() - 1, 15).toISOString().slice(0, 10), vendorId: "", category: "Meals & Entertainment", amount: 5200.00, paymentMethod: "Credit Card", reference: "TEAM-LUNCH-2024", notes: "Team lunch and client dinner" };
+  const exp14 = { id: nextId(), expenseDate: new Date(today.getFullYear(), today.getMonth(), 18).toISOString().slice(0, 10), vendorId: vendor2.id, category: "Software & Subscriptions", amount: 6500.00, paymentMethod: "Credit Card", reference: "SOFTWARE-2024-003", notes: "Project management tools" };
+  const exp15 = { id: nextId(), expenseDate: new Date(today.getFullYear(), today.getMonth() - 2, 5).toISOString().slice(0, 10), vendorId: vendor1.id, category: "Office Supplies", amount: 1800.00, paymentMethod: "Cash", reference: "MISC-2023-12", notes: "Miscellaneous supplies" };
+  state.expenses.push(exp1, exp2, exp3, exp4, exp5, exp6, exp7, exp8, exp9, exp10, exp11, exp12, exp13, exp14, exp15);
+
+  // Bills
+  const bill1 = { id: nextId(), vendorId: vendor2.id, billNumber: "BILL-2024-001", billDate: new Date(today.getFullYear(), today.getMonth(), 1).toISOString().slice(0, 10), dueDate: new Date(today.getFullYear(), today.getMonth(), 16).toISOString().slice(0, 10), amount: 12000.00, status: "Paid", notes: "Software licenses - Paid on time" };
+  const bill2 = { id: nextId(), vendorId: vendor3.id, billNumber: "BILL-2024-002", billDate: new Date(today.getFullYear(), today.getMonth(), 1).toISOString().slice(0, 10), dueDate: new Date(today.getFullYear(), today.getMonth() + 1, 1).toISOString().slice(0, 10), amount: 8500.00, status: "Unpaid", notes: "Monthly hosting - February" };
+  const bill3 = { id: nextId(), vendorId: vendor4.id, billNumber: "BILL-2024-003", billDate: new Date(today.getFullYear(), today.getMonth() - 1, 20).toISOString().slice(0, 10), dueDate: new Date(today.getFullYear(), today.getMonth(), 20).toISOString().slice(0, 10), amount: 25000.00, status: "Partially Paid", notes: "Marketing campaign - 50% paid" };
+  const bill4 = { id: nextId(), vendorId: vendor6.id, billNumber: "BILL-2024-004", billDate: new Date(today.getFullYear(), today.getMonth() - 2, 15).toISOString().slice(0, 10), dueDate: new Date(today.getFullYear(), today.getMonth() - 1, 15).toISOString().slice(0, 10), amount: 45000.00, status: "Paid", notes: "Consultation services - Completed" };
+  const bill5 = { id: nextId(), vendorId: vendor8.id, billNumber: "BILL-2024-005", billDate: new Date(today.getFullYear(), today.getMonth() - 1, 10).toISOString().slice(0, 10), dueDate: new Date(today.getFullYear(), today.getMonth() + 1, 10).toISOString().slice(0, 10), amount: 18000.00, status: "Unpaid", notes: "Legal services - Due in 60 days" };
+  const bill6 = { id: nextId(), vendorId: vendor1.id, billNumber: "BILL-2024-006", billDate: new Date(today.getFullYear(), today.getMonth() - 3, 28).toISOString().slice(0, 10), dueDate: new Date(today.getFullYear(), today.getMonth() - 2, 28).toISOString().slice(0, 10), amount: 4500.00, status: "Overdue", notes: "Office supplies - Payment pending" };
+  state.bills.push(bill1, bill2, bill3, bill4, bill5, bill6);
+
+  // Update vendor payables based on unpaid bills
+  vendor3.totalPayable += bill2.amount;
+  vendor4.totalPayable += bill3.amount * 0.5; // Partially paid
+  vendor8.totalPayable += bill5.amount;
+  vendor1.totalPayable += bill6.amount;
+
+  // Purchase Orders
+  const po1 = { id: nextId(), vendorId: vendor1.id, poNumber: "PO-2024-001", orderDate: new Date(today.getFullYear(), today.getMonth(), 5).toISOString().slice(0, 10), deliveryDate: new Date(today.getFullYear(), today.getMonth(), 25).toISOString().slice(0, 10), amount: 8500.00, status: "Sent", notes: "Office furniture order" };
+  const po2 = { id: nextId(), vendorId: vendor2.id, poNumber: "PO-2024-002", orderDate: new Date(today.getFullYear(), today.getMonth(), 12).toISOString().slice(0, 10), deliveryDate: new Date(today.getFullYear(), today.getMonth() + 1, 15).toISOString().slice(0, 10), amount: 35000.00, status: "Draft", notes: "Hardware upgrade - Pending approval" };
+  const po3 = { id: nextId(), vendorId: vendor5.id, poNumber: "PO-2024-003", orderDate: new Date(today.getFullYear(), today.getMonth() - 1, 8).toISOString().slice(0, 10), deliveryDate: new Date(today.getFullYear(), today.getMonth() - 1, 20).toISOString().slice(0, 10), amount: 6200.00, status: "Received", notes: "Marketing materials - Delivered" };
+  const po4 = { id: nextId(), vendorId: vendor3.id, poNumber: "PO-2024-004", orderDate: new Date(today.getFullYear(), today.getMonth(), 18).toISOString().slice(0, 10), deliveryDate: "", amount: 15000.00, status: "Draft", notes: "Cloud infrastructure expansion" };
+  const po5 = { id: nextId(), vendorId: vendor7.id, poNumber: "PO-2024-005", orderDate: new Date(today.getFullYear(), today.getMonth() - 2, 10).toISOString().slice(0, 10), deliveryDate: new Date(today.getFullYear(), today.getMonth() - 2, 12).toISOString().slice(0, 10), amount: 4200.00, status: "Cancelled", notes: "Transportation services - Cancelled due to schedule change" };
+  state.purchaseOrders.push(po1, po2, po3, po4, po5);
+
   addActivity(
     "Sample data loaded (resources, projects, tasks, assignments).",
     "System seed"
@@ -2078,6 +2462,12 @@ function initialRender() {
   renderPayments();
   renderRecurringInvoices();
   renderCreditNotes();
+  // Accounts renders
+  renderAccountsVendors();
+  renderAccountsExpenses();
+  renderAccountsBills();
+  renderAccountsPurchaseOrders();
+  renderAccountsActivity();
 }
 
 window.addEventListener("DOMContentLoaded", () => {

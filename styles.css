@@ -214,11 +214,9 @@ body {
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(
-    circle at top right,
-    rgba(99, 102, 241, 0.2),
-    transparent 60%
-  );
+  background: radial-gradient(circle at top right,
+      rgba(99, 102, 241, 0.2),
+      transparent 60%);
   opacity: 0.7;
   pointer-events: none;
 }
@@ -984,6 +982,15 @@ select.task-input[name="priority"]:focus {
 }
 
 .sales-subview-active {
+  display: grid;
+}
+
+/* Accounts subview styles - mirror Sales module */
+.accounts-subview {
+  display: none;
+}
+
+.accounts-subview-active {
   display: grid;
 }
 

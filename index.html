@@ -913,24 +913,387 @@
         </section>
 
         <section id="view-accounts" class="view">
-          <div class="card">
+          <div class="sales-header">
             <h2>Accounts</h2>
             <p class="muted">
-              Live summary of projects and tasks owned by the Accounts
-              department.
+              Manage vendors, expenses, bills, and purchase orders in one place.
             </p>
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Project</th>
-                  <th>Type</th>
-                  <th>Total Tasks</th>
-                  <th>Open</th>
-                  <th>Completed</th>
-                </tr>
-              </thead>
-              <tbody id="accounts-body"></tbody>
-            </table>
+          </div>
+
+          <div class="subnav accounts-subnav">
+            <button class="subnav-item subnav-active" data-accounts-subview="accounts-vendors">
+              Vendors
+            </button>
+            <button class="subnav-item" data-accounts-subview="accounts-expenses">
+              Expenses
+            </button>
+            <button class="subnav-item" data-accounts-subview="accounts-bills">
+              Bills
+            </button>
+            <button class="subnav-item" data-accounts-subview="accounts-purchase-orders">
+              Purchase Orders
+            </button>
+            <button class="subnav-item" data-accounts-subview="accounts-activity">
+              Activity History
+            </button>
+          </div>
+
+          <!-- Accounts - Vendors -->
+          <div id="accounts-vendors" class="accounts-subview accounts-subview-active two-column">
+            <div class="card">
+              <div class="sales-card-header">
+                <div>
+                  <h3>All Vendors</h3>
+                  <p class="muted small">
+                    Manage suppliers and service providers.
+                  </p>
+                </div>
+                <button type="button" class="btn-sales-primary"
+                  onclick="document.getElementById('accounts-vendor-name').focus();">
+                  + New
+                </button>
+              </div>
+              <table class="table sales-table" id="table-accounts-vendors">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Company</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Payment Terms</th>
+                    <th>Total Payable</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+
+            <div class="card">
+              <h3>Create / Edit Vendor</h3>
+              <form id="form-accounts-vendor" class="sales-form-grid">
+                <label>
+                  Contact Name *
+                  <input id="accounts-vendor-name" type="text" name="name" placeholder="John Smith" required />
+                </label>
+                <label>
+                  Company Name *
+                  <input type="text" name="company" placeholder="ABC Corp" required />
+                </label>
+                <label>
+                  Email
+                  <input type="email" name="email" placeholder="vendor@example.com" />
+                </label>
+                <label>
+                  Phone
+                  <input type="tel" name="phone" placeholder="+1 555 000 0000" />
+                </label>
+                <label>
+                  Payment Terms
+                  <select name="paymentTerms">
+                    <option value="Net 15">Net 15</option>
+                    <option value="Net 30" selected>Net 30</option>
+                    <option value="Net 45">Net 45</option>
+                    <option value="Net 60">Net 60</option>
+                    <option value="Due on receipt">Due on receipt</option>
+                  </select>
+                </label>
+                <label>
+                  Tax ID / GST
+                  <input type="text" name="taxId" placeholder="Tax ID or GST number" />
+                </label>
+                <label style="grid-column: 1 / -1;">
+                  Address
+                  <textarea name="address" rows="2" placeholder="Full address"></textarea>
+                </label>
+                <div class="sales-form-actions">
+                  <button type="submit" class="btn-sales-primary">
+                    Save Vendor
+                  </button>
+                  <button type="button" class="btn-sales-secondary"
+                    onclick="document.getElementById('form-accounts-vendor').reset();">
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- Accounts - Expenses -->
+          <div id="accounts-expenses" class="accounts-subview two-column">
+            <div class="card">
+              <div class="sales-card-header">
+                <div>
+                  <h3>Record Expense</h3>
+                  <p class="muted small">
+                    Track business expenses and receipts.
+                  </p>
+                </div>
+              </div>
+              <form id="form-accounts-expense" class="sales-form-grid">
+                <label>
+                  Expense Date *
+                  <input type="date" name="expenseDate" required />
+                </label>
+                <label>
+                  Vendor
+                  <select name="vendorId" id="select-expense-vendor">
+                    <option value="">Select vendor</option>
+                  </select>
+                </label>
+                <label>
+                  Category *
+                  <select name="category" required>
+                    <option value="">Select category</option>
+                    <option value="Office Supplies">Office Supplies</option>
+                    <option value="Software & Subscriptions">Software & Subscriptions</option>
+                    <option value="Marketing">Marketing</option>
+                    <option value="Utilities">Utilities</option>
+                    <option value="Travel">Travel</option>
+                    <option value="Meals & Entertainment">Meals & Entertainment</option>
+                    <option value="Professional Services">Professional Services</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </label>
+                <label>
+                  Amount (₹) *
+                  <input type="number" name="amount" min="0" step="0.01" placeholder="0.00" required />
+                </label>
+                <label>
+                  Payment Method
+                  <select name="paymentMethod">
+                    <option value="Cash">Cash</option>
+                    <option value="Credit Card">Credit Card</option>
+                    <option value="Debit Card">Debit Card</option>
+                    <option value="Bank Transfer">Bank Transfer</option>
+                    <option value="UPI">UPI</option>
+                    <option value="Cheque">Cheque</option>
+                  </select>
+                </label>
+                <label>
+                  Reference #
+                  <input type="text" name="reference" placeholder="Receipt or reference number" />
+                </label>
+                <label style="grid-column: 1 / -1;">
+                  Notes
+                  <textarea name="notes" rows="2" placeholder="Additional notes"></textarea>
+                </label>
+                <div class="sales-form-actions">
+                  <button type="submit" class="btn-sales-primary">
+                    Save Expense
+                  </button>
+                  <button type="button" class="btn-sales-secondary"
+                    onclick="document.getElementById('form-accounts-expense').reset();">
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <div class="card">
+              <div class="sales-card-header">
+                <div>
+                  <h3>All Expenses</h3>
+                  <p class="muted small">
+                    Track and manage business expenses.
+                  </p>
+                </div>
+                <div>
+                  <strong>Total: <span id="total-expenses">₹0.00</span></strong>
+                </div>
+              </div>
+              <table class="table sales-table" id="table-accounts-expenses">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Vendor</th>
+                    <th>Category</th>
+                    <th>Payment Method</th>
+                    <th>Amount</th>
+                    <th>Reference</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Accounts - Bills -->
+          <div id="accounts-bills" class="accounts-subview two-column">
+            <div class="card">
+              <div class="sales-card-header">
+                <div>
+                  <h3>Create Bill</h3>
+                  <p class="muted small">
+                    Record bills from vendors and suppliers.
+                  </p>
+                </div>
+              </div>
+              <form id="form-accounts-bill" class="sales-form-grid">
+                <label>
+                  Vendor *
+                  <select name="vendorId" id="select-bill-vendor" required>
+                    <option value="">Select vendor</option>
+                  </select>
+                </label>
+                <label>
+                  Bill #
+                  <input type="text" name="billNumber" placeholder="BILL-0001" required />
+                </label>
+                <label>
+                  Bill Date *
+                  <input type="date" name="billDate" required />
+                </label>
+                <label>
+                  Due Date *
+                  <input type="date" name="dueDate" required />
+                </label>
+                <label>
+                  Amount (₹) *
+                  <input type="number" name="amount" min="0" step="0.01" placeholder="0.00" required />
+                </label>
+                <label>
+                  Status
+                  <select name="status">
+                    <option value="Unpaid">Unpaid</option>
+                    <option value="Partially Paid">Partially Paid</option>
+                    <option value="Paid">Paid</option>
+                    <option value="Overdue">Overdue</option>
+                  </select>
+                </label>
+                <label style="grid-column: 1 / -1;">
+                  Notes
+                  <textarea name="notes" rows="2" placeholder="Bill notes"></textarea>
+                </label>
+                <div class="sales-form-actions">
+                  <button type="submit" class="btn-sales-primary">
+                    Save Bill
+                  </button>
+                  <button type="button" class="btn-sales-secondary"
+                    onclick="document.getElementById('form-accounts-bill').reset();">
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <div class="card">
+              <div class="sales-card-header">
+                <div>
+                  <h3>All Bills</h3>
+                  <p class="muted small">
+                    Manage and track vendor bills.
+                  </p>
+                </div>
+              </div>
+              <table class="table sales-table" id="table-accounts-bills">
+                <thead>
+                  <tr>
+                    <th>Bill Date</th>
+                    <th>Bill #</th>
+                    <th>Vendor</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                    <th>Amount</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Accounts - Purchase Orders -->
+          <div id="accounts-purchase-orders" class="accounts-subview two-column">
+            <div class="card">
+              <div class="sales-card-header">
+                <div>
+                  <h3>Create Purchase Order</h3>
+                  <p class="muted small">
+                    Create and track purchase orders to vendors.
+                  </p>
+                </div>
+              </div>
+              <form id="form-accounts-purchase-order" class="sales-form-grid">
+                <label>
+                  Vendor *
+                  <select name="vendorId" id="select-po-vendor" required>
+                    <option value="">Select vendor</option>
+                  </select>
+                </label>
+                <label>
+                  PO #
+                  <input type="text" name="poNumber" placeholder="PO-0001" required />
+                </label>
+                <label>
+                  Order Date *
+                  <input type="date" name="orderDate" required />
+                </label>
+                <label>
+                  Expected Delivery
+                  <input type="date" name="deliveryDate" />
+                </label>
+                <label>
+                  Amount (₹) *
+                  <input type="number" name="amount" min="0" step="0.01" placeholder="0.00" required />
+                </label>
+                <label>
+                  Status
+                  <select name="status">
+                    <option value="Draft">Draft</option>
+                    <option value="Sent">Sent</option>
+                    <option value="Received">Received</option>
+                    <option value="Cancelled">Cancelled</option>
+                  </select>
+                </label>
+                <label style="grid-column: 1 / -1;">
+                  Notes
+                  <textarea name="notes" rows="2" placeholder="PO notes"></textarea>
+                </label>
+                <div class="sales-form-actions">
+                  <button type="submit" class="btn-sales-primary">
+                    Save Purchase Order
+                  </button>
+                  <button type="button" class="btn-sales-secondary"
+                    onclick="document.getElementById('form-accounts-purchase-order').reset();">
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <div class="card">
+              <div class="sales-card-header">
+                <div>
+                  <h3>All Purchase Orders</h3>
+                  <p class="muted small">
+                    Track purchase orders and delivery status.
+                  </p>
+                </div>
+              </div>
+              <table class="table sales-table" id="table-accounts-purchase-orders">
+                <thead>
+                  <tr>
+                    <th>Order Date</th>
+                    <th>PO #</th>
+                    <th>Vendor</th>
+                    <th>Expected Delivery</th>
+                    <th>Status</th>
+                    <th>Amount</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Accounts - Activity History -->
+          <div id="accounts-activity" class="accounts-subview">
+            <div class="card">
+              <h3>Activity History</h3>
+              <p class="muted">
+                Complete timeline of all accounts-related activities.
+              </p>
+              <ul class="activity-list" id="accounts-activity-log"></ul>
+            </div>
           </div>
         </section>
 
